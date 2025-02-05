@@ -1,0 +1,72 @@
+#dropdownMenu {
+            max-height: 175px; /* Περιορισμός ύψους για 7 εγγραφές */
+            overflow-y: auto;  /* Ενεργοποίηση scroll bar */
+            position: absolute; /* Για να εμφανίζεται κάτω από το input */
+            width: 100%; /* Ίδιο πλάτος με το input */
+            background-color: white;
+            border: 1px solid #ccc;
+            z-index: 1055; /* Πάνω από το modal (1050 είναι το modal default) */
+            display: none; /* Κρύβεται αρχικά */
+        }
+
+        #dropdownMenu div {
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+
+        #dropdownMenu div:hover {
+            background-color: #f0f0f0;
+        }
+.modal-backdrop {
+    z-index: 1040 !important; /* Χαμηλότερο z-index για το backdrop */
+    background-color: rgba(0, 0, 0, 0.5) !important; /* Ρυθμίζει το γκρίζο φόντο */
+}
+
+/* Ρύθμιση του modal */
+.modal-dialog {
+    z-index: 1050 !important; /* Υψηλότερο z-index για το modal */
+    margin-top: 10%;
+}
+
+/* Ρύθμιση του modal-content για καλύτερη εμφάνιση */
+.modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+}
+/* Εικόνα χρήστη (εικονίδιο) */
+.pic {
+    width: 20px;  /* Ορισμός σταθερού πλάτους */
+    height: 100px; /* Ορισμός σταθερού ύψους */
+    border-radius: 50%; /* Δημιουργεί το κυκλικό σχήμα */
+    overflow: hidden;  /* Κρύβει οποιοδήποτε μέρος της εικόνας που ξεφεύγει από τον κύκλο */
+    margin-bottom: 20px;
+    border: 2px solid #ddd; /* Προαιρετικό: Προσθήκη περιγράμματος γύρω από την εικόνα */
+}
+
+.pic img {
+    width: 100%;    /* Κάνει την εικόνα να γεμίζει το διαθέσιμο πλάτος του κύκλου */
+    height: 100%;   /* Κάνει την εικόνα να γεμίζει το διαθέσιμο ύψος του κύκλου */
+    object-fit: cover;  /* Διασφαλίζει ότι η εικόνα καλύπτει πλήρως τον κύκλο χωρίς παραμόρφωση */
+}
+
+
+#doctors {
+    position: relative;
+    z-index: 10; /* Εξασφαλίζει ότι η ενότητα 'doctors' θα εμφανίζεται πάνω από άλλα στοιχεία */
+}
+
+.team-member {
+    position: relative; /* Ξεκάθαρη τοποθέτηση του κουτιού των μελών */
+    z-index: 20; /* Για να εξασφαλίσεις ότι θα εμφανίζεται σωστά πάνω από άλλα περιεχόμενα */
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.member-info {
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+}

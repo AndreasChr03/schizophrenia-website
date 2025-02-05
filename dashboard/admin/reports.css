@@ -1,0 +1,126 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Sidebar styles */
+.sidebar {
+    background-color: #1977CC; /* Χρώμα του sidebar */
+    height: 100vh;
+    padding-top: 20px;
+    width: 200px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-item {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-top: 5px;
+}
+
+.sidebar-item i {
+    font-size: 40px;
+    color: white; /* Λευκά τα εικονίδια */
+    margin-bottom: 10px;
+}
+
+.sidebar-item p {
+    margin-top: 10px;
+    color: white; /* Λευκό χρώμα για το κείμενο */
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Main content styles */
+.content {
+    background-color: #f4f8fb;
+    padding: 20px;
+    flex-grow: 1;
+}
+
+/* To adjust layout below the header */
+.container-fluid {
+    display: flex;
+    flex-direction: row;
+    padding-left: 0px !important;
+}
+
+canvas {
+    max-width: 100%;
+    height: 400px;
+    margin: 20px auto;
+    display: block;
+}
+.charts-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    background-color: #F1F7FC;
+}
+.chart-container {
+    flex: 1;
+    max-width: 48%;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+.sidebar-item:hover {
+    color: #1977CC !important; /* Αλλάζει το φόντο σε μπλε όταν το hover */
+    background-color: #FFFFFF;
+    cursor: pointer;
+    
+}
+.sidebar-item:hover i, .sidebar-item:hover p {
+color: #1977CC; /* Αλλάζει το χρώμα των εικονιδίων και του κειμένου σε μπλε */
+}
+
+.table {
+    border: 1px solid #007BFF;
+  }
+
+  .table th, .table td {
+    background-color: #f0f8ff; /* Πολύ ανοιχτό μπλε */
+    color: #003366; /* Σκούρο μπλε */
+  }
+
+  .table thead {
+    background-color: #007BFF;
+    color: white;
+  }
+
+  /* Κεντρικοποίηση του πίνακα στον οριζόντιο άξονα */
+  .container_table {
+    max-width: 600px;
+    margin: 50px auto;  /* Κεντράρει το container στην σελίδα */
+    background-color: #ffffff;
+    border-radius: 30px;
+  }
+  
+.allTables {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.container_table {
+  flex: 1; /* Ίδιο μέγεθος για τα δύο div */
+  max-width: 48%; /* Όριο πλάτους για κάθε πίνακα */
+  box-sizing: border-box; /* Συμπεριλαμβάνει padding στο πλάτος */
+}
+
+.table {
+  width: 100%; /* Εξασφαλίζει ότι ο πίνακας καλύπτει το container */
+}
+
+h2 {
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.table-wrapper {
+    width: 48%; /* Ή όσο χρειάζεται */
+}
+
+

@@ -1,0 +1,172 @@
+     /* Γενικά στυλ για τη σελίδα */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Στυλ για το header (παραμένει πάνω) */
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Κεντρικό container */
+        .profile-container {
+            background: #fff;
+            padding: 20px 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            width: 80%;
+            max-width: 400px;
+            margin: 50px auto;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .profile-info p {
+            margin: 10px 0;
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .profile-info strong {
+            color: #000;
+        }
+
+        /* Στυλ για κινητές συσκευές */
+        @media (max-width: 768px) {
+            .profile-container {
+                padding: 15px 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .profile-info p {
+                font-size: 0.9rem;
+            }
+        }
+    
+
+    /* Προσαρμοσμένο CSS */
+    .profile-container {
+        background: #fff;
+        padding: 30px 40px; /* Μεγαλύτερο padding */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); /* Πιο έντονη σκιά */
+        border-radius: 12px; /* Στρογγυλεμένες γωνίες */
+        text-align: left; /* Στοίχιση αριστερά */
+        width: 90%; /* Πλατύτερο πλαίσιο */
+        max-width: 500px; /* Μέγιστο πλάτος */
+        margin: 50px auto;
+        font-size: 1.1rem; /* Ελαφρώς μεγαλύτερη γραμματοσειρά */
+    }
+
+    h1 {
+        font-size: 2rem; /* Μεγαλύτερος τίτλος */
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+    }
+
+    .profile-info p {
+        margin: 15px 0; /* Αρκετός χώρος μεταξύ των γραμμών */
+        display: flex; /* Χρήση flex για διάταξη */
+        align-items: center;
+        color: #555;
+    }
+
+    .profile-info strong {
+        margin-left: 10px; /* Απόσταση μεταξύ του εικονιδίου και του κειμένου */
+        color: #000;
+    }
+
+    .icon {
+        background: #007bff; /* Φόντο στα εικονίδια */
+        color: white; /* Άσπρο χρώμα για τα εικονίδια */
+        border-radius: 50%; /* Στρογγυλό σχήμα */
+        padding: 8px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+    }
+
+    /* Στυλ για κινητές συσκευές */
+    @media (max-width: 768px) {
+        .profile-container {
+            padding: 20px 25px; /* Μικρότερο padding σε κινητές συσκευές */
+        }
+
+        h1 {
+            font-size: 1.6rem;
+        }
+
+        .profile-info p {
+            font-size: 0.95rem;
+        }
+
+        .icon {
+            width: 25px;
+            height: 25px;
+            font-size: 0.9rem;
+        }
+    }
+    #dropdownMenu {
+            max-height: 175px; /* Περιορισμός ύψους για 7 εγγραφές */
+            overflow-y: auto;  /* Ενεργοποίηση scroll bar */
+            position: absolute; /* Για να εμφανίζεται κάτω από το input */
+            width: 100%; /* Ίδιο πλάτος με το input */
+            background-color: white;
+            border: 1px solid #ccc;
+            z-index: 1055; /* Πάνω από το modal (1050 είναι το modal default) */
+            display: none; /* Κρύβεται αρχικά */
+        }
+
+        #dropdownMenu div {
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+
+        #dropdownMenu div:hover {
+            background-color: #f0f0f0;
+        }
+.modal-backdrop {
+    z-index: 1040 !important; /* Χαμηλότερο z-index για το backdrop */
+    background-color: rgba(0, 0, 0, 0.5) !important; /* Ρυθμίζει το γκρίζο φόντο */
+}
+
+/* Ρύθμιση του modal */
+.modal-dialog {
+    z-index: 1050 !important; /* Υψηλότερο z-index για το modal */
+    margin-top: 10%;
+}
+
+/* Ρύθμιση του modal-content για καλύτερη εμφάνιση */
+.modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+}
+.row {
+	padding-top: 10px;
+	padding-bottom:10px;
+}
+	.dashboard-item:hover {
+    background-color: rgba(1, 65, 185, 0.1);
+    border-radius: 10px;
+  }
