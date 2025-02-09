@@ -93,7 +93,6 @@ if ($banned) {
       <div class="container d-flex justify-content-center justify-content-md-between">
         <div class="contact-info d-flex align-items-center">
           <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@example.com">andreasggchristou@gmail.com</a></i>
-          <i class="bi bi-phone d-flex align-items-center ms-4"><span>+357 5589 55488 55</span></i>
         </div>
         <div class="social-links d-none d-md-flex align-items-center">
           <!-- <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
@@ -115,19 +114,18 @@ if ($banned) {
 
         <nav id="navmenu" class="navmenu">
           <ul>
-            <li><a href="../../index.php" class="active">Home<br></a></li>
-            <li><a href="../../index.php#departments">Schizophrenia</a></li>
-            <li><a href="../../index.php#doctors">Doctors</a></li>
-            <li><a href="../../index.php#questions">Questions</a></li>
-            <li><a href="../../index.php#events">Events</a></li>
-            <li><a href="../../contact.php">Contact</a></li>
+            <li><a href="../../index.php" class="active">Αρχική<br></a></li>
+            <li><a href="../../index.php#departments">Σχιζοφρένεια</a></li>
+            <li><a href="../../index.php#questions">Ερωτήσεις</a></li>
+            <li><a href="../../index.php#events">Εκδημώσεις</a></li>
+            <li><a href="../../contact.php">Επικοινωνία</a></li>
             
               
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
         <!-- <a class="cta-btn d-none d-sm-block" href="#appointment">Make an Appointment</a> -->
-		<a class="cta-btn d-none d-sm-block" href="../../questionnaire.php">Questionnaire</a>
+		<a class="cta-btn d-none d-sm-block" href="../../questionnaire.php">Ερωτηματολόγιο</a>
 
 			<div class="row-fluid" style="display: flex; justify-content: flex-end;">
                 <div class="span6 login-header">

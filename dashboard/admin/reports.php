@@ -253,7 +253,7 @@ array_multisort($months, SORT_ASC, $appointmentCounts);
               <i class="fa-solid fa-user-doctor"></i>
               <div class="stats-item">
                 <span data-purecounter-start="0" data-purecounter-end="<?= $totalUsers ?>" data-purecounter-duration="1" class="purecounter"></span>
-                <p>Users</p>
+                <p>Χρήστες</p>
               </div>
             </div><!-- End Stats Item -->
         
@@ -261,7 +261,7 @@ array_multisort($months, SORT_ASC, $appointmentCounts);
               <i class="fa-regular fa-hospital"></i>
               <div class="stats-item">
                 <span data-purecounter-start="0" data-purecounter-end="<?= $newUsers ?>" data-purecounter-duration="1" class="purecounter"></span>
-                <p>New Users Last 3 Months</p>
+                <p>Χρήστες τους Τελευταίους 3 Μήνες</p>
               </div>
             </div><!-- End Stats Item -->
         
@@ -269,7 +269,7 @@ array_multisort($months, SORT_ASC, $appointmentCounts);
               <i class="fas fa-flask"></i>
               <div class="stats-item">
                 <span data-purecounter-start="0" data-purecounter-end="<?= $totalWomen ?>" data-purecounter-duration="1" class="purecounter"></span>
-                <p>Women</p>
+                <p>Γυναίκες</p>
               </div>
             </div><!-- End Stats Item -->
         
@@ -277,7 +277,7 @@ array_multisort($months, SORT_ASC, $appointmentCounts);
               <i class="fas fa-award"></i>
               <div class="stats-item">
                 <span data-purecounter-start="0" data-purecounter-end="<?= $totalMen ?>" data-purecounter-duration="1" class="purecounter"></span>
-                <p>Men</p>
+                <p>Άντρες</p>
               </div>
             </div><!-- End Stats Item -->
         

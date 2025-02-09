@@ -225,7 +225,7 @@ switch ($action) {
 
     /* Κεντρικοποίηση του πίνακα στον οριζόντιο άξονα */
     .container_table {
-      max-width: 900px;
+      max-width: 1400px;
       margin: 50px auto;  /* Κεντράρει το container στην σελίδα */
     }
     .add {
@@ -293,6 +293,7 @@ switch ($action) {
           <th>Ημερομηνία</th>
           <th>Ώρα</th>
           <th>Περιγραφή</th>
+          <th>Συμμετέχοντες</th>
           <th>Συμμετοχή</th>
           <th>Διαγραφή</th>
           <th>Ενημέρωση</th>
@@ -301,43 +302,48 @@ switch ($action) {
       <tbody>
         <?php
         
-                $sql1 = "
-            SELECT e.*, 
-                   CASE 
-                       WHEN p.email_user IS NOT NULL THEN 1
-                       ELSE 0
-                   END AS is_participating
-            FROM events e
-            LEFT JOIN participants p 
-                   ON e.id = p.id_event AND p.email_user = ?
-        ";
-        $stmt = $conn->prepare($sql1);
-        
-        if ($stmt === false) {
-            die("Error in preparing the query: " . $conn->error);
-        }
-        
-        $stmt->bind_param('s', $user_email);
-        
-        // Εκτέλεση του query
-        $stmt->execute();
-        
-        // Ανάκτηση αποτελεσμάτων
-        $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $ctr = 0;
-        while ($row = $result->fetch_assoc()) {
+        $sql1 = "
+    SELECT e.*, 
+           COUNT(p1.email_user) AS participant_count, 
+           CASE 
+               WHEN p2.email_user IS NOT NULL THEN 1
+               ELSE 0
+           END AS is_participating
+    FROM events e
+    LEFT JOIN participants p1 
+           ON e.id = p1.id_event  
+    LEFT JOIN participants p2 
+           ON e.id = p2.id_event AND p2.email_user = ?  
+    WHERE e.date > CURDATE()
+    GROUP BY e.id, p2.email_user
+";
+
+$stmt = $conn->prepare($sql1);
+if ($stmt === false) {
+    die("Error in preparing the query: " . $conn->error);
+}
+
+$stmt->bind_param('s', $user_email);
+$stmt->execute();
+
+// Ανάκτηση αποτελεσμάτων
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    $ctr = 0;
+    while ($row = $result->fetch_assoc()) {
         $isParticipating = $row['is_participating'];
-            $ctr++;
-            echo "<tr>";
-            // Εμφάνιση του αριθμού σειράς
-            echo "<td>" . $ctr  . "</td>";
-            // Εμφάνιση της ερώτησης
-            echo "<td>" . htmlspecialchars($row['title']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['organiser']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['date']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['time']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['description']) . "</td>";
+        $participantCount = $row['participant_count']; // Αριθμός συμμετεχόντων
+        $ctr++;
+        
+        echo "<tr>";
+        echo "<td>" . $ctr . "</td>";
+        echo "<td>" . htmlspecialchars($row['title']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['organiser']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['date']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['time']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['description']) . "</td>";
+        echo "<td>" . $participantCount . "</td>"; 
+
             if ($isParticipating) {
                 // Ο χρήστης συμμετέχει, εμφάνιση κουμπιού για ακύρωση συμμετοχής
                 echo "<td><button class='btn btn-danger btn-sm' data-bs-toggle='modal' data-bs-target='#cancelModal' 

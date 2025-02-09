@@ -101,17 +101,17 @@ $result = $stmt->get_result();
 </head>
 <body>
     <div class="container mt-4">
-        <h1>Schizophrenia Questionnaire</h1>
+        <h1>Ερωτηματολόγιο</h1>
         <form id="quiz-form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Number</th>
-                        <th>Question</th>
-                        <th>Strongly Disagree</th>
-                        <th>Slightly Disagree</th>
-                        <th>Slightly Agree</th>
-                        <th>Strongly Agree</th>
+                        <th>Αριθμός</th>
+                        <th>Ερώτηση</th>
+                        <th>Διαφωνώ Απόλυτα</th>
+                        <th>Διαφωνώ Ελαφρώς</th>
+                        <th>Συμφωνώ Ελαφρώς</th>
+                        <th>Συμφωνώ Απόλυτα</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -185,25 +185,26 @@ $result = $stmt->get_result();
 
                 var performance = '';
                 if (totalScore < totalQuestions * 2.5) {
-                    results = 'No Signs of Schizophrenia';
-                    performance = 'Based upon your responses to this schizophrenia screening measure, you do not appear to show signs commonly associated with schizophrenia or a schizophrenia-related disorder. Your responses are similar to those who do not experience symptoms such as hallucinations, delusions, disorganized speech, or emotional "flattening."'
-                    remind ='It is important to note that this online quiz is not a diagnostic tool and cannot confirm or rule out any mental health condition. If you have concerns about your mental health or that of a loved one, consider consulting a qualified mental health professional for further evaluation and support.';
+                    results = 'Χωρίς Ενδείξεις Σχιζοφρένειας';
+                    performance = 'Με βάση τις απαντήσεις σας σε αυτή τη δοκιμή ανίχνευσης σχιζοφρένειας, δεν φαίνεται να παρουσιάζετε σημάδια που συνδέονται συνήθως με τη σχιζοφρένεια ή μια σχετική διαταραχή. Οι απαντήσεις σας είναι παρόμοιες με εκείνες των ατόμων που δεν βιώνουν συμπτώματα όπως ψευδαισθήσεις, παραληρητικές ιδέες, αποδιοργανωμένη ομιλία ή συναισθηματική "επίπεδη διάθεση".';
+                    remind = 'Είναι σημαντικό να σημειωθεί ότι αυτό το διαδικτυακό τεστ δεν αποτελεί διαγνωστικό εργαλείο και δεν μπορεί να επιβεβαιώσει ή να αποκλείσει οποιαδήποτε ψυχική διαταραχή. Εάν έχετε ανησυχίες για την ψυχική σας υγεία ή κάποιου αγαπημένου σας προσώπου, εξετάστε το ενδεχόμενο να συμβουλευτείτε έναν εξειδικευμένο επαγγελματία ψυχικής υγείας για περαιτέρω αξιολόγηση και υποστήριξη.';
                 } else if (totalScore < totalQuestions * 3.5) {
-                    results = 'Possibility of early schizophrenia';
-                    performance = 'Based upon your responses to this schizophrenia screening measure, you may have some early signs commonly associated with schizophrenia or a schizophrenia-related disorder. Your responses are similar to others who experience early symptoms of schizophrenia or a schizophrenia-related disorder. This includes symptoms such as hallucinations, delusions, disorganized speech, and/or emotional "flattening."';
-                    remind =' Since this online quiz cannot diagnosis any disorder, it does not tell you whether you have schizophrenia or not. Only that your responses are similar to those that may qualify for a diagnosis of schizophrenia.';
+                    results = 'Πιθανότητα πρώιμης σχιζοφρένειας';
+                    performance = 'Με βάση τις απαντήσεις σας σε αυτή τη δοκιμή ανίχνευσης σχιζοφρένειας, ενδέχεται να εμφανίζετε κάποια πρώιμα σημάδια που σχετίζονται με τη σχιζοφρένεια ή μια σχετική διαταραχή. Οι απαντήσεις σας είναι παρόμοιες με εκείνες των ατόμων που εμφανίζουν πρώιμα συμπτώματα σχιζοφρένειας ή μιας σχετικής διαταραχής, συμπεριλαμβανομένων συμπτωμάτων όπως ψευδαισθήσεις, παραληρητικές ιδέες, αποδιοργανωμένη ομιλία και/ή συναισθηματική "επίπεδη διάθεση".';
+                    remind = 'Δεδομένου ότι αυτό το διαδικτυακό τεστ δεν μπορεί να διαγνώσει κάποια διαταραχή, δεν μπορεί να σας πει αν έχετε σχιζοφρένεια ή όχι. Απλώς δείχνει ότι οι απαντήσεις σας είναι παρόμοιες με εκείνες που ενδέχεται να πληρούν τα κριτήρια για διάγνωση σχιζοφρένειας.';
                 } else {
-                    results = 'Early schizophrenia ' ;
-                    performance = 'Based upon your responses to this schizophrenia screening measure, you appear to have some signs commonly associated with schizophrenia or a schizophrenia-related disorder. Your responses are similar to others who experience symptoms of schizophrenia or a schizophrenia-related disorder. This includes symptoms such as hallucinations, delusions, disorganized speech, and/or emotional "flattening." Since this online quiz cannot diagnosis any disorder, it does not tell you whether you have schizophrenia or not. Only that your responses are similar to those that may qualify for a diagnosis of schizophrenia.';
-                    remind = 'Since this online quiz cannot diagnosis any disorder, it does not tell you whether you have schizophrenia or not. Only that your responses are similar to those that may qualify for a diagnosis of schizophrenia.';
+                    results = 'Πρώιμη σχιζοφρένεια';
+                    performance = 'Με βάση τις απαντήσεις σας σε αυτή τη δοκιμή ανίχνευσης σχιζοφρένειας, φαίνεται ότι παρουσιάζετε κάποια σημάδια που συνδέονται συνήθως με τη σχιζοφρένεια ή μια σχετική διαταραχή. Οι απαντήσεις σας είναι παρόμοιες με εκείνες των ατόμων που εμφανίζουν συμπτώματα σχιζοφρένειας ή μιας σχετικής διαταραχής, συμπεριλαμβανομένων συμπτωμάτων όπως ψευδαισθήσεις, παραληρητικές ιδέες, αποδιοργανωμένη ομιλία και/ή συναισθηματική "επίπεδη διάθεση". Δεδομένου ότι αυτό το διαδικτυακό τεστ δεν μπορεί να διαγνώσει κάποια διαταραχή, δεν μπορεί να σας πει αν έχετε σχιζοφρένεια ή όχι. Απλώς δείχνει ότι οι απαντήσεις σας είναι παρόμοιες με εκείνες που ενδέχεται να πληρούν τα κριτήρια για διάγνωση σχιζοφρένειας.';
+                    remind = 'Δεδομένου ότι αυτό το διαδικτυακό τεστ δεν μπορεί να διαγνώσει κάποια διαταραχή, δεν μπορεί να σας πει αν έχετε σχιζοφρένεια ή όχι. Απλώς δείχνει ότι οι απαντήσεις σας είναι παρόμοιες με εκείνες που ενδέχεται να πληρούν τα κριτήρια για διάγνωση σχιζοφρένειας.';
                 }
+
                 
                 $('#modal-body').html(`
-                    <h6>Your result:</h6>
+                    <h6>Το αποτέλεσμα σου:</h6>
                     <ul>${results}</ul>
-                    <h6>Description: </h6>
+                    <h6>Περιγραφή: </h6>
                     <ul>${performance}</ul>
-                    <h6>Reminder: </h6>
+                    <h6>Υποσημείωση: </h6>
                     <ul>${remind}</ul>
                 `);
                 $('#exampleModal').modal('show');

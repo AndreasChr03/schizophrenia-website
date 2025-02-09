@@ -94,7 +94,6 @@ if ($banned) {
       <div class="container d-flex justify-content-center justify-content-md-between">
         <div class="contact-info d-flex align-items-center">
           <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@example.com">andreasggchristou@gmail.com</a></i>
-          <i class="bi bi-phone d-flex align-items-center ms-4"><span>+357 5589 55488 55</span></i>
         </div>
         <div class="social-links d-none d-md-flex align-items-center">
           <!-- <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
@@ -116,14 +115,14 @@ if ($banned) {
 
         <nav id="navmenu" class="navmenu">
           <ul>
-          <li><a href="index.php" class="active">Home<br></a></li>
-            <li><a href="index.php#departments">Schizophrenia</a></li>
-            <li><a href="index.php#doctors">Doctors</a></li>
-            <li><a href="index.php#questions">Questions</a></li>
-            <li><a href="index.php#events">Events</a></li>
+          <li><a href="../../index.php" class="active">Αρχική<br></a></li>
+            <li><a href="../../index.php#departments">Σχιζοφρένεια</a></li>
+            <li><a href="../../index.php#questions">Ερωτήσεις</a></li>
+            <li><a href="../../index.php#events">Εκδημώσεις</a></li>
+            
             <?php 
             if (isset($_SESSION['user'])) {
-              echo '<li><a href="contact.php">Contact</a></li>';
+              echo '<li><a href="../../contact.php">Επικοινωνία</a></li>';
             }
             ?>
             
@@ -131,7 +130,7 @@ if ($banned) {
         </nav>
         <?php 
         if (isset($_SESSION['user'])) {
-              echo '<a class="cta-btn d-none d-sm-block" href="questionnaire.php">Questionnaire</a>';
+              echo '<a class="cta-btn d-none d-sm-block" href="questionnaire.php">Ερωτηματολόγιο</a>';
             }
         
         ?>

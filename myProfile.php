@@ -46,6 +46,14 @@ $_SESSION['user']['nationality'] = $city;
 }
 ?>
 <style>
+    .profile-info{
+        font-size: 18px !important; /* Ή άλλο μέγεθος που προτιμάς */
+    }
+    
+    .profile-info p {
+    font-size: 14px !important;
+}
+
     .custom-alert {
         position: fixed;
         top: 0%;
