@@ -117,7 +117,7 @@ if ($banned) {
             <li><a href="../../index.php" class="active">Αρχική<br></a></li>
             <li><a href="../../index.php#departments">Σχιζοφρένεια</a></li>
             <li><a href="../../index.php#questions">Ερωτήσεις</a></li>
-            <li><a href="../../index.php#events">Εκδημώσεις</a></li>
+            <li><a href="../../index.php#events">Εκδηλώσεις</a></li>
             <li><a href="../../contact.php">Επικοινωνία</a></li>
             
               

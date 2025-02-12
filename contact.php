@@ -148,8 +148,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="index-page">
 <section id="contact" class="contact section">
     <div class="container section-title" data-aos="fade-up">
-            <h2>Contact</h2>
-            <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+            <h2>Επικοινωνία</h2>
+            <p>Εδώ μπορείται να επικοινήσετε μαζί μας και να δείτε την τοποθεσία μας.</p>
           </div><!-- End Section Title -->
     
           <div class="mb-5" data-aos="fade-up" data-aos-delay="200">
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
                 <i class="bi bi-geo-alt"></i>
                     <div>
-                        <h3>Location</h3>
+                        <h3>Τοποθεσία</h3>
                         <p>A108 Adam Street, New York, NY 535022</p>
                     </div>
                 </div><!-- End Info Item -->
@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
                 <i class="bi bi-telephone"></i>
                     <div>
-                        <h3>Call Us</h3>
+                        <h3>Τηλέφωνο</h3>
                         <p>+357 5589 55488 55</p>
                     </div>
                 </div><!-- End Info Item -->
@@ -180,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
                     <i class="bi bi-envelope"></i>
                     <div>
-                        <h3>Email Us</h3>
+                        <h3>Ηλεκτρονική διεύθυνση</h3>
                         <p>andreasggchristou@gmail.com</p>
                     </div>
                 </div><!-- End Info Item -->

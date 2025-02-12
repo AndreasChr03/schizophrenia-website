@@ -274,7 +274,7 @@ switch ($action) {
     </div>
 <?php endif; ?>
 <div class="container_table">
-    <h2 style="text-align: center; padding-bottom: 40px;">Ερωτήσεις Ερωτηματολογίου</h2>
+    <h2 style="text-align: center; padding-bottom: 40px;">Εκδηλώσεις</h2>
     <div class="add">
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
         <i class="bi bi-plus-circle"></i> Νέα Εκδήλωση

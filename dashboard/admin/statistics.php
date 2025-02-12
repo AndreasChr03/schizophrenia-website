@@ -109,13 +109,13 @@ while ($row = $result->fetch_assoc()) {
   $category = trim(strtolower($row['result'])); // Καθαρίζουμε τυχόν κενά και μετατρέπουμε σε πεζά
 
   switch ($category) {
-      case 'possibility of early schizophrenia':
+      case 'Πιθανότητα πρώιμης σχιζοφρένειας':
           $possibility_early = $row['total'];
           break;
-      case 'no signs of schizophrenia':
+      case 'Χωρίς Ενδείξεις Σχιζοφρένειας':
           $no_signs = $row['total'];
           break;
-      case 'early schizophrenia':
+      case 'Πρώιμη σχιζοφρένεια':
           $early_schizophrenia = $row['total'];
           break;
       default:
@@ -243,7 +243,7 @@ while ($row = $result->fetch_assoc()) {
                   <i class="fa-solid fa-user-doctor"></i>
                   <div class="stats-item">
                     <span data-purecounter-start="0" data-purecounter-end="<?= $no_signs ?>" data-purecounter-duration="1" class="purecounter"></span>
-                    <p>No sign of Schizophrenia</p>
+                    <p>Χωρίς Ενδείξεις Σχιζοφρένειας</p>
                   </div>
                 </div><!-- End Stats Item -->
             
@@ -251,7 +251,7 @@ while ($row = $result->fetch_assoc()) {
                   <i class="fa-regular fa-hospital"></i>
                   <div class="stats-item">
                     <span data-purecounter-start="0" data-purecounter-end="<?= $possibility_early ?>" data-purecounter-duration="1" class="purecounter"></span>
-                    <p>Possibility of early schizophrenia</p>
+                    <p>Πιθανότητα πρώιμης σχιζοφρένειας</p>
                   </div>
                 </div><!-- End Stats Item -->
             
@@ -259,7 +259,7 @@ while ($row = $result->fetch_assoc()) {
                   <i class="fas fa-flask"></i>
                   <div class="stats-item">
                     <span data-purecounter-start="0" data-purecounter-end="<?= $early_schizophrenia  ?>" data-purecounter-duration="1" class="purecounter"></span>
-                    <p>Early schizophrenia </p>
+                    <p> Πρώιμη σχιζοφρένεια</p>
                   </div>
                 </div><!-- End Stats Item -->
             

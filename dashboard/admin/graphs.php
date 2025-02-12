@@ -13,67 +13,50 @@
         exit();
       }
       
-      $sqlGraph = "SELECT result, COUNT(*) AS count FROM rating GROUP BY result";
-    $stmtGraph = $conn->prepare($sqlGraph);
-    if ($stmtGraph === false) {
-        die("Σφάλμα κατά την προετοιμασία του statement: " . $conn->error);
-    }
-    $stmtGraph->execute();
-    $result = $stmtGraph->get_result();
-    
-    // Δημιουργία πίνακα για τα δεδομένα του γραφήματος
-    $resultsData = [];
-    $counts = [];
-    while ($row = $result->fetch_assoc()) {
-        $resultsData[] = $row['result'];
-        $counts[] = $row['count'];
-    }
-    
+      $sqlAppointments = "
+      SELECT DATE_FORMAT(appointmentDate, '%Y-%m') AS month, COUNT(*) AS count
+      FROM appointment_details
+      WHERE appointmentDate >= DATE_FORMAT(NOW() - INTERVAL 13 MONTH, '%Y-%m-01') AND appointmentDate < DATE_FORMAT(NOW(), '%Y-%m-01')
+      GROUP BY DATE_FORMAT(appointmentDate, '%Y-%m')
+      ORDER BY month
+      ";
+      $stmtAppointments = $conn->prepare($sqlAppointments);
+      $stmtAppointments->execute();
+      $resultAppointments = $stmtAppointments->get_result();
+      
+      $months = [];
+      $appointmentCounts = [];
+      
+      // Δημιουργία λίστας με τους προηγούμενους 12 μήνες
+      $allMonths = [];
+      $currentMonth = date("Y-m");  // Τρέχων μήνας
+      
+      // Δημιουργία των 12 προηγούμενων μηνών (χωρίς τον τρέχοντα μήνα)
+      for ($i = 12; $i > 0; $i--) {
+          $allMonths[] = date("Y-m", strtotime("-$i month", strtotime($currentMonth)));
+      }
+      
+      // Επεξεργασία των δεδομένων που επιστρέφει το query
+      while ($row = $resultAppointments->fetch_assoc()) {
+          $months[] = $row['month'];
+          $appointmentCounts[] = $row['count'];
+      }
+      
+      // Προσθήκη τιμών 0 για μήνες που δεν έχουν δεδομένα
+      foreach ($allMonths as $month) {
+          // Αν ο μήνας δεν υπάρχει στη λίστα, προσθέτουμε τον μήνα με τιμή 0
+          if (!in_array($month, $months)) {
+              $months[] = $month;
+              $appointmentCounts[] = 0;
+          }
+      }
+      
+      // Ταξινόμηση των μηνών και των μετρήσεων για να βεβαιωθούμε ότι είναι σωστά ευθυγραμμισμένα
+      array_multisort($months, SORT_ASC, $appointmentCounts);
     
     //_______________________________pinakas 2________________________________________________
     
-    // Ερώτημα για τα ραντεβού
-$sqlAppointments = "
-SELECT DATE_FORMAT(appointmentDate, '%Y-%m') AS month, COUNT(*) AS count
-FROM appointment_details
-WHERE appointmentDate >= DATE_FORMAT(NOW() - INTERVAL 13 MONTH, '%Y-%m-01') AND appointmentDate < DATE_FORMAT(NOW(), '%Y-%m-01')
-GROUP BY DATE_FORMAT(appointmentDate, '%Y-%m')
-ORDER BY month
-";
-$stmtAppointments = $conn->prepare($sqlAppointments);
-$stmtAppointments->execute();
-$resultAppointments = $stmtAppointments->get_result();
-
-$months = [];
-$appointmentCounts = [];
-
-// Δημιουργία λίστας με τους προηγούμενους 12 μήνες
-$allMonths = [];
-$currentMonth = date("Y-m");  // Τρέχων μήνας
-
-// Δημιουργία των 12 προηγούμενων μηνών (χωρίς τον τρέχοντα μήνα)
-for ($i = 12; $i > 0; $i--) {
-    $allMonths[] = date("Y-m", strtotime("-$i month", strtotime($currentMonth)));
-}
-
-// Επεξεργασία των δεδομένων που επιστρέφει το query
-while ($row = $resultAppointments->fetch_assoc()) {
-    $months[] = $row['month'];
-    $appointmentCounts[] = $row['count'];
-}
-
-// Προσθήκη τιμών 0 για μήνες που δεν έχουν δεδομένα
-foreach ($allMonths as $month) {
-    // Αν ο μήνας δεν υπάρχει στη λίστα, προσθέτουμε τον μήνα με τιμή 0
-    if (!in_array($month, $months)) {
-        $months[] = $month;
-        $appointmentCounts[] = 0;
-    }
-}
-
-// Ταξινόμηση των μηνών και των μετρήσεων για να βεβαιωθούμε ότι είναι σωστά ευθυγραμμισμένα
-array_multisort($months, SORT_ASC, $appointmentCounts);
-      
+    
 ?>
 
 <!DOCTYPE html>
@@ -130,55 +113,98 @@ array_multisort($months, SORT_ASC, $appointmentCounts);
 
     <div class="charts-row">
         <div class="chart-container">
-        <h2 style="text-align: center; padding-bottom: 40px;">Αποτελέσματα Ερωτηματολογίου</h2>
-            <canvas id="resultsChart"></canvas>
-        </div>
-        <div class="chart-container">
-        <h2 style="text-align: center; padding-bottom: 40px;">Αριθμός Ραντεβού Ανά Μήνα</h2>
+            <h2 style="text-align: center; padding-bottom: 40px;">Αριθμός Ραντεβού Ανά Μήνα</h2>
             <canvas id="secondChart"></canvas>
         </div>
-    </div>
+        <div class="chart-container">
+            <h2 style="text-align: center; padding-bottom: 40px;">Αποτελέσματα Χρηστών Ανά Έτος</h2>
+            <select id="yearFilter" onchange="updateChart()"></select>
+            <canvas id="comparisonChart"></canvas>
+        </div>
+</div>
 
-    <script>
-    const labels = <?php echo json_encode($resultsData); ?>;
-    const dataCounts = <?php echo json_encode($counts); ?>;
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let myChart; // Διατηρούμε αναφορά στο chart
 
-    const ctx1 = document.getElementById('resultsChart').getContext('2d');
-    new Chart(ctx1, {
-        type: 'pie',
+function fetchChartData(year) {
+    fetch(`fetch_data.php?year=${year}`)
+        .then(response => response.json())
+        .then(data => {
+            updateChartData(data.selected_year, data.year_2025);
+        })
+        .catch(error => console.error("Error fetching data:", error));
+}
+
+function updateChartData(data, data2025) {
+    if (myChart) {
+        myChart.destroy(); // Καταστρέφουμε το προηγούμενο γράφημα
+    }
+
+    const ctx = document.getElementById('comparisonChart').getContext('2d');
+    myChart = new Chart(ctx, {
+        type: 'bar',
         data: {
-            labels: labels,
-            datasets: [{
-                label: 'Αριθμός Αξιολογήσεων',
-                data: dataCounts,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.7)', // Κόκκινο
-                    'rgba(75, 192, 192, 0.7)', // Πράσινο
-                    'rgba(54, 162, 235, 0.7)', // Μπλε
-                    'rgba(153, 102, 255, 0.7)', // Μωβ
-                    'rgba(255, 159, 64, 0.7)'  // Πορτοκαλί
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
+            labels: [
+                'Χωρίς Ενδείξεις Σχιζοφρένειας - ' + data.year, 'Πιθανότητα πρώιμης σχιζοφρένειας - ' + data.year, 'Πρώιμη σχιζοφρένεια - ' + data.year, 
+                'Χωρίς Ενδείξεις Σχιζοφρένειας - 2025', 'Πιθανότητα πρώιμης σχιζοφρένειας - 2025', 'Πρώιμη σχιζοφρένεια - 2025'
+            ],
+            datasets: [
+                {
+                    label: `Στοιχεία ${data.year}`,
+                    data: [
+                        data.no_schizophrenia, data.possible_stage, data.schizophrenia_stage,
+                        data2025.no_schizophrenia, data2025.possible_stage ,data2025.schizophrenia_stage
+                    ],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.6)', 'rgba(75, 192, 192, 0.3)', 
+                        'rgba(255, 206, 86, 0.6)', 'rgba(255, 206, 86, 0.3)', 
+                        'rgba(255, 99, 132, 0.6)', 'rgba(255, 99, 132, 0.3)'
+                    ],
+                    borderWidth: 1
+                }
+            ]
         },
         options: {
             responsive: true,
             scales: {
-                y: { beginAtZero: true }
+                y: {
+                    beginAtZero: true
+                }
             }
         }
     });
-    
-    
+}
 
-    const appointmentMonths = <?php echo json_encode($months); ?>;
+    function updateChart() {
+        const selectedYear = document.getElementById('yearFilter').value;
+        fetchChartData(selectedYear);
+    }
+
+    // Φόρτωση δεδομένων με την πρώτη εμφάνιση της σελίδας
+    fetchChartData(2025);
+</script>
+<script>
+    // Δημιουργία των τελευταίων 10 ετών δυναμικά
+    function populateYearDropdown() {
+        const yearFilter = document.getElementById("yearFilter");
+        const currentYear = new Date().getFullYear();
+
+        for (let i = 0; i < 10; i++) {
+            let year = currentYear - i;
+            let option = document.createElement("option");
+            option.value = year;
+            option.textContent = year;
+            if (i === 0) option.selected = true; // Επιλεγμένο το πιο πρόσφατο έτος
+            yearFilter.appendChild(option);
+        }
+    }
+
+    populateYearDropdown(); // Κλήση της συνάρτησης κατά τη φόρτωση της σελίδας
+</script>
+
+<script>
+     const appointmentMonths = <?php echo json_encode($months); ?>;
 const appointmentCounts = <?php echo json_encode($appointmentCounts); ?>;
 
 const ctx2 = document.getElementById('secondChart').getContext('2d');
@@ -202,8 +228,8 @@ new Chart(ctx2, {
         }
     }
 });
-
-    new PureCounter();
 </script>
         </div>
     </div>
+</body>
+</html>

@@ -14,7 +14,7 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <title>Schizophrenia Questionnaire</title>
+    <title>SchizoCare</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -146,7 +146,7 @@ $result = $stmt->get_result();
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Questionnaire</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Ερωτηματολόγιο</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -155,7 +155,7 @@ $result = $stmt->get_result();
                 <p>Your results will appear here.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Κλείσιμο</button>
             </div>
         </div>
     </div>
