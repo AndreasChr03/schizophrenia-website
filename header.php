@@ -110,15 +110,15 @@ if ($banned) {
         <a href="../../index.php" class="logo d-flex align-items-center me-auto">
           <!-- Uncomment the line below if you also wish to use an image logo -->
           <!-- <img src="assets/img/logo.png" alt=""> -->
-          <h1 class="sitename">Medilab</h1>
+          <h1 class="sitename">SchizoCare</h1>
         </a>
 
         <nav id="navmenu" class="navmenu">
           <ul>
-          <li><a href="../../index.php" class="active">Αρχική<br></a></li>
-            <li><a href="../../index.php#departments">Σχιζοφρένεια</a></li>
-            <li><a href="../../index.php#questions">Ερωτήσεις</a></li>
-            <li><a href="../../index.php#events">Εκδηλώσεις</a></li>
+          <li><a href="index.php" class="active">Αρχική<br></a></li>
+            <li><a href="index.php#departments">Σχιζοφρένεια</a></li>
+            <li><a href="index.php#questions">Ερωτήσεις</a></li>
+            <li><a href="index.php#events">Εκδηλώσεις</a></li>
             
             <?php 
             if (isset($_SESSION['user'])) {
@@ -176,19 +176,19 @@ if ($banned) {
                                                     
                                                 </a>
                                                 <div class="dropdown-menu menu dropdown-menu-right" id="action-menu-0-menu">
-                                                    <a href="myProfile.php" class="dropdown-item menu-action">Profile</a>
+                                                    <a href="myProfile.php" class="dropdown-item menu-action">Προφίλ</a>
                                                     <?php 
                                                         if($userRole == 1) {
-															echo '<a href="dashboard/admin/functions.php" class="dropdown-item menu-action">Dashoboard</a>';
+  															echo '<a href="dashboard/admin/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
 
 														}
 														else {
-															echo '<a href="dashboard/client/functions.php" class="dropdown-item menu-action">Dashoboard</a>';
+															echo '<a href="dashboard/client/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
 														}
                                                     
                                                     ?>
                                                     
-                                                    <a href="landing_page/logout.php" class="dropdown-item menu-action">Log out</a>
+                                                    <a href="landing_page/logout.php" class="dropdown-item menu-action">Αποσύνδεση</a>
                                                 </div>
                                             </div>
                                         </div>

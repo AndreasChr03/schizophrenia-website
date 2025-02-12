@@ -117,8 +117,11 @@
             <canvas id="secondChart"></canvas>
         </div>
         <div class="chart-container">
-            <h2 style="text-align: center; padding-bottom: 40px;">Αποτελέσματα Χρηστών Ανά Έτος</h2>
-            <select id="yearFilter" onchange="updateChart()"></select>
+        <h2 style="text-align: center;">
+          Αποτελέσματα Χρηστών Ανά Έτος 
+          <select id="yearFilter" onchange="updateChart()" style="font-size: 22px; height: 40px; line-height: 40px;">
+          </select>
+        </h2>            
             <canvas id="comparisonChart"></canvas>
         </div>
 </div>

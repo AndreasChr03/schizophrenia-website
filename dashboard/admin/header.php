@@ -45,7 +45,7 @@ if ($banned) {
   <!-- auto gia kapoio logo epireazei ta koutia sto index prepei na to do kapote -->
   <link rel="stylesheet" type="text/css" href="https://elearning.cut.ac.cy/theme/yui_combo.php?rollup/3.17.2/yui-moodlesimple-min.css">
   <link rel="stylesheet" type="text/css" href="https://elearning.cut.ac.cy/theme/styles.php/lambda/1735614005_1691466492/all">
-
+  <link rel="icon" type="image/png" href="../../assets/img/favicon.png">
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -109,7 +109,7 @@ if ($banned) {
         <a href="../../index.php " class="logo d-flex align-items-center me-auto">
           <!-- Uncomment the line below if you also wish to use an image logo -->
           <!-- <img src="assets/img/logo.png" alt=""> -->
-          <h1 class="sitename">Medilab</h1>
+          <h1 class="sitename">SchizoCare</h1>
         </a>
 
         <nav id="navmenu" class="navmenu">
