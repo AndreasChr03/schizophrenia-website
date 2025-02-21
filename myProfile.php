@@ -101,7 +101,8 @@ $_SESSION['user']['nationality'] = $city;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/myProfile.css">
-    <title>Προφίλ Χρήστη</title>
+    <link href="../../assets/img/favicon1.png" rel="icon">
+
     
 </head>
 <body>

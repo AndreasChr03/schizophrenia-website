@@ -40,7 +40,7 @@ if ($banned) {
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - Medilab Bootstrap Template</title>
+  <link rel="icon" href="../../assets/img/favicon_32x32.png" sizes="32x32" type="image/png">
   <!-- auto gia kapoio logo epireazei ta koutia sto index prepei na to do kapote -->
   <link rel="stylesheet" type="text/css" href="https://elearning.cut.ac.cy/theme/yui_combo.php?rollup/3.17.2/yui-moodlesimple-min.css">
   <link rel="stylesheet" type="text/css" href="https://elearning.cut.ac.cy/theme/styles.php/lambda/1735614005_1691466492/all">
@@ -163,21 +163,21 @@ if ($banned) {
                                                     
                                                 </a>
                                                 <div class="dropdown-menu menu dropdown-menu-right" id="action-menu-0-menu">
-                                                <a href="../../myProfile.php" class="dropdown-item menu-action">Profile</a>
+                                                <a href="../../myProfile.php" class="dropdown-item menu-action">Προφίλ</a>
                                                     <?php 
                                                     $userRole = $_SESSION['user']['role_id'];
                                                     
                                                         if($userRole == 1) {
-															echo '<a href="../../dashboard/admin/functions.php" class="dropdown-item menu-action">Dashoboard</a>';
+															echo '<a href="../../dashboard/admin/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
 
 														}
 														else {
-															echo '<a href="../../dashboard/client/functions.php" class="dropdown-item menu-action">Dashoboard</a>';
+															echo '<a href="../../dashboard/client/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
 														}
                                                     
                                                     ?>
                                                     
-                                                    <a href="../../landing_page/logout.php" class="dropdown-item menu-action">Log out</a>
+                                                    <a href="../../landing_page/logout.php" class="dropdown-item menu-action">Αποσύνδεση</a>
                                                 </div>
                                             </div>
                                         </div>

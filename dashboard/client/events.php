@@ -80,7 +80,8 @@ switch ($action) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
-    <title>Document</title>
+    <link href="../../assets/img/favicon1.png" rel="icon">
+
     <style>
    
         .modal-backdrop {

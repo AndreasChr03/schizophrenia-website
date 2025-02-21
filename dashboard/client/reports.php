@@ -19,7 +19,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <title>Dashboard</title>
+    <link href="../../assets/img/favicon1.png" rel="icon">
+
     <link rel="stylesheet" href="../../dashboard/admin/reports.css">
 </head>
 <body>

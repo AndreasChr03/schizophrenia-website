@@ -42,7 +42,7 @@ if ($banned) {
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - Medilab Bootstrap Template</title>
+
   <!-- auto gia kapoio logo epireazei ta koutia sto index prepei na to do kapote -->
   <link rel="stylesheet" type="text/css" href="https://elearning.cut.ac.cy/theme/yui_combo.php?rollup/3.17.2/yui-moodlesimple-min.css">
   <link rel="stylesheet" type="text/css" href="https://elearning.cut.ac.cy/theme/styles.php/lambda/1735614005_1691466492/all">
