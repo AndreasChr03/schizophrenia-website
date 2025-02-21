@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         header("Location: newPassword.php?email=" . urlencode($email));
                         exit();
                     } else {
-                        $error_message = "Invalid code. Please try again." . $actual_code . " ka " .$user_code;
+                        $error_message = "Invalid code. Please try again.";
                     }
             }   
         }
@@ -37,7 +37,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-    <title>Verify Code</title>
+    <link rel="icon" href="../assets/img/favicon_32x32.png" sizes="32x32" type="image/png">
+
     <style>
         .code-input {
             width: 40px;
@@ -61,15 +62,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-weight: bold;
             color: red;
         }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('../assets/img/background_image.png') no-repeat center center/cover;
+            backdrop-filter: blur(20px);
+        }
+
+        .blur-background {
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.7); /* Adjust the opacity as needed */
+            border-radius: 8px;
+            padding: 20px;
+        }
     </style>
 </head>
-    <body class="bg-light" style="background-image:url('background_2.webp'); background-size: cover; background-position: center; background-attachment: fixed;">
+    <body class="bg-light">
         <div class="container p-5 d-flex flex-column align-items-center">
             <form method="post" class="form-control mt-5 p-5 w-100 col-lg-4 mx-auto" 
-            style="background-color: rgba(0, 0, 0, 0.5); border-radius: 8px; color: white;">
+            style="background-color: rgba(0, 0, 0, 0.7); border-radius: 8px; color: white;">
                 <div class="text-center mb-3">
-                    <h5>Password Reset</h5>
-                    <p>A code has been sent to your email: <strong><?= htmlspecialchars($_GET['email']) ?></strong></p>
+                    <h5>Επαναφορά Κωδικού</h5>
+                    <p>Έχει αποσταλεί ένας κωδικός στο email σας: <strong><?= htmlspecialchars($_GET['email']) ?></strong></p>
                 </div>
                 
                 <div class="mb-3 d-flex justify-content-center" style="border-radius: 30px;">
@@ -78,6 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             type="text" 
                             name="code[]" 
                             maxlength="1" 
+                            style="background-color: #E8F0FE; color:black;"
                             class="code-input" 
                             oninput="moveToNext(this, <?= $i ?>)" 
                             onkeydown="handleBackspace(this, <?= $i ?>, event)"
@@ -97,7 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php endif; ?>
                 
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary" style="background-color: lightblue;">Verify</button>
+                    <button type="submit" class="btn btn-primary" style="background-color: #1997CC !important; border-color: #1997CC !important;">Επιβεβαίωση</button>
                 </div>
             </form>
         </div>

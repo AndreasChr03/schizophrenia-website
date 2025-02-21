@@ -211,7 +211,7 @@ switch ($action) {
         <div class="row gy-4 gx-5">
 
           <div class="col-lg-6 position-relative align-self-start" data-aos="fade-up" data-aos-delay="200">
-            <img src="assets/img/about.jpg" class="img-fluid" alt="">
+            <img src="assets/img/about.jpg" class="img-fluid" alt="" style="border-radius:30px;">
             <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox pulsating-play-btn"></a>
           </div>
 
@@ -503,7 +503,7 @@ switch ($action) {
                     <p>Η σχιζοφρένεια είναι μια ψυχική διαταραχή, και το κύριο χαρακτηριστικό της είναι ότι το άτομο που νοσεί χάνει την επαφή με την πραγματικότητα ή αδυνατεί να αναγνωρίσει το πραγματικό από τις ψευδαισθήσεις. Η νόσος προκαλεί τη λανθασμένη αντίληψη των ερεθισμάτων του περιβάλλοντος και επηρεάζει τις σκέψεις του ίδιου του πάσχοντος, με αποτέλεσμα τα συμπεράσματά του για την εξωτερική πραγματικότητα και για τους άλλους ανθρώπους να είναι εσφαλμένα. Η σχιζοφρένεια στις μέρες μας θεωρείται ένα από τα πιο σοβαρά ψυχικά νοσήματα.</p>
                   </div>
                   <div class="col-lg-4 text-center order-1 order-lg-2">
-                    <img src="assets/img/departments-1.jpg" alt="" class="img-fluid">
+                    <img src="assets/img/departments-1.jpg" alt="" class="img-fluid" style="border-radius: 30px;">
                   </div>
                 </div>
               </div>

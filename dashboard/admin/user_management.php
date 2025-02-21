@@ -112,14 +112,13 @@ $result = $stmt->get_result();
     <div class="topbar d-flex align-items-center">
       <div class="container d-flex justify-content-center justify-content-md-between">
         <div class="contact-info d-flex align-items-center">
-          <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@example.com">contact@example.com</a></i>
-          <i class="bi bi-phone d-flex align-items-center ms-4"><span>+1 5589 55488 55</span></i>
+          <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@example.com">andreasggchristou@gmail.com</a></i>
         </div>
         <div class="social-links d-none d-md-flex align-items-center">
-          <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
+          <!-- <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
           <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
           <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-          <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+          <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a> -->
         </div>
       </div>
     </div><!-- End Top Bar -->
@@ -127,27 +126,26 @@ $result = $stmt->get_result();
     <div class="branding d-flex align-items-center">
 
       <div class="container position-relative d-flex align-items-center justify-content-between">
-        <a href="index.html" class="logo d-flex align-items-center me-auto">
+        <a href="../../index.php " class="logo d-flex align-items-center me-auto">
           <!-- Uncomment the line below if you also wish to use an image logo -->
           <!-- <img src="assets/img/logo.png" alt=""> -->
-          <h1 class="sitename">Medilab</h1>
+          <h1 class="sitename">SchizoCare</h1>
         </a>
 
         <nav id="navmenu" class="navmenu">
           <ul>
-            <li><a href="../../index.php" class="active">Home<br></a></li>
-            <li><a href="../../index.php#departments">Schizophrenia</a></li>
-            <li><a href="../../index.php#doctors">Doctors</a></li>
-            <li><a href="../../index.php#questions">Questions</a></li>
-            <li><a href="../../index.php#events">Events</a></li>
-            <li><a href="../../contact.php">Contact</a></li>
+            <li><a href="../../index.php" class="active">Αρχική<br></a></li>
+            <li><a href="../../index.php#departments">Σχιζοφρένεια</a></li>
+            <li><a href="../../index.php#questions">Ερωτήσεις</a></li>
+            <li><a href="../../index.php#events">Εκδηλώσεις</a></li>
+            <li><a href="../../contact.php">Επικοινωνία</a></li>
             
               
           <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
 
         <!-- <a class="cta-btn d-none d-sm-block" href="#appointment">Make an Appointment</a> -->
-		<a class="cta-btn d-none d-sm-block" href="questionnaire.php">Questionnaire</a>
+		<a class="cta-btn d-none d-sm-block" href="../../questionnaire.php">Ερωτηματολόγιο</a>
 
 			<div class="row-fluid" style="display: flex; justify-content: flex-end;">
                 <div class="span6 login-header">
@@ -206,23 +204,7 @@ $result = $stmt->get_result();
                                     </div>
                                 </div>
                             </div>
-                            <span class="userinitials size-80">
-								<?php
-									if (isset($_SESSION['user'])) {
-										// Αν υπάρχει το 'user' στο session, ανακτούμε το όνομα του χρήστη
-										$userName = $_SESSION['user']['name'];
-										$userSurname = $_SESSION['user']['surname'];
-  										$userSurname = substr($userSurname,0,1);
-										$userName = substr($user_name,0,1);
-										$userName = $userName . $userSurname;
-										echo $userName;
-									} else {
-										// Αν δεν υπάρχει, εμφανίζουμε το "Guest"
-										$user_name = "-";
-										echo $user_name;
-									}
-								?>
-							</span>
+                        
                         </div>
                     </div>
                 </div>

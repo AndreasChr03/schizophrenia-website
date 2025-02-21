@@ -31,7 +31,8 @@
     <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/295/295128.png">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Forgot Password</title>
+    <link rel="icon" href="../assets/img/favicon_32x32.png" sizes="32x32" type="image/png">
+
     <script>
     function validateForm(event) {
             const emailInput = document.getElementById('email');
@@ -52,48 +53,72 @@
     }
 }
 </script>
+
+<style>
+    * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('../assets/img/background_image.png') no-repeat center center/cover;
+            backdrop-filter: blur(20px);
+        }
+
+        .blur-background {
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.7); /* Adjust the opacity as needed */
+            border-radius: 8px;
+            padding: 20px;
+        }
+</style>
 </head>
-<body class="bg-light" style="background-image:url('background_2.webp'); background-size: cover; background-position: center; background-attachment: fixed;">
+<body class="bg-light">
     <div class="container p-5 d-flex flex-column align-items-center">
         <!-- Form with transparent background -->
         <form method="post" class="form-control mt-5 p-5 w-100 col-lg-4 mx-auto" 
-      style="position: relative; z-index: 10; height: auto; max-width: 500px; 
-      box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px; 
-      background-color: rgba(0, 0, 0, 0.5); border-radius: 8px; color: white;" 
-      onsubmit="validateForm(event)">
+          style="position: relative; z-index: 10; height: auto; max-width: 500px; 
+          box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px; 
+          background-color: rgba(0, 0, 0, 0.7); border-radius: 8px; color: white;" 
+          onsubmit="validateForm(event)">
 
-    <div class="text-center mb-3">
-        <i class="fa fa-user-circle-o fa-3x mt-1 mb-2" style="color: lightblue;"></i>
-        <h5 class="p-2" style="font-weight: 700;">Forgot Password</h5>
-    </div>
-    
-    <div class="mb-3">
-        <h5 class="p-1" style="font-weight: 400;">Please enter your email</h5>
-    </div>
+        <div class="text-center mb-3">
+            <i class="fa fa-user-circle-o fa-3x mt-1 mb-2" style="color: #1997CC"></i>
+            <h5 class="p-2" style="font-weight: 700;">Ξεχάσατε τον Κωδικό;</h5>
+        </div>
 
-    <!-- Email Field -->
-    <div class="mb-3">
-        <label for="email"><i class="fa fa-envelope"></i> Email</label>
-        <input type="email" name="email" id="email" class="form-control" 
-               style="background-color: rgba(255, 255, 255, 0.1); color: white;">
-        <div class="invalid-feedback">
-            Please fill in the email.
+        <div class="mb-3">
+            <h5 class="p-1" style="font-weight: 400;">Παρακαλώ εισάγετε το email σας</h5>
         </div>
-        <div class="valid-feedback">
-            <i class="fa fa-check-circle" style="color: green;"></i> Email is valid!
-        </div>
-    </div>
 
-    <!-- Submit button -->
-    <div>
-        <div class="d-flex justify-content-end mb-3">
-            <button type="submit" class="btn btn-primary" onclick="checkForm()" 
-                    style="font-weight: 600; background-color: lightblue; border-color: lightblue;">
-                Send email 
-            </button>
+        <!-- Email Field -->
+        <div class="mb-3">
+            <label for="email"><i class="fa fa-envelope"></i> Email</label>
+            <input type="email" name="email" id="email" class="form-control" 
+                   style="background-color: #E8F0FE;">
+            <div class="invalid-feedback">
+                Παρακαλώ συμπληρώστε το email.
+            </div>
+            <div class="valid-feedback">
+                <i class="fa fa-check-circle" style="color: green;"></i> Το email είναι έγκυρο!
+            </div>
         </div>
-    </div>
-</form>
+
+        <!-- Submit button -->
+        <div>
+            <div class="d-flex justify-content-end mb-3">
+                <button type="submit" class="btn btn-primary" onclick="checkForm()" 
+                        style="font-weight: 600; background-color: #1997CC !important; border-color: #1997CC;"">
+                    Αποστολή email 
+                </button>
+            </div>
+        </div>
+    </form>
     </div>
     
     

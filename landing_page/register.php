@@ -125,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt = $conn->prepare("INSERT INTO users (name, surname, date_of_birth, nationality, phone, email, password, role_id, gender, registration_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 $stmt->bind_param("ssssissisi", $name, $surname, $dateOfBirth, $nationality, $phone, $email, $hashed_password, $role_id,$gender, $registration_num);
                 
-                $action = "Δημιουργεία λογαριασμού";
+                $action = "Δημιουργία λογαριασμού";
                 
                 $stmt1 = $conn->prepare("INSERT INTO logs (email, action) VALUES (?, ?)");
                 $stmt1->bind_param("ss", $email, $action);
@@ -161,11 +161,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/295/295128.png">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <title>Registration</title>
+    <link rel="icon" href="../assets/img/favicon_32x32.png" sizes="32x32" type="image/png">
+
     <style>
     /* Βασικό στυλ του dropdown */
 select {
@@ -182,12 +181,34 @@ select:hover {
     outline: none !important; /* Αφαίρεση περιγράμματος του browser */
 }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('../assets/img/background_image.png') no-repeat center center/cover;
+            backdrop-filter: blur(20px);
+        }
+
+        .blur-background {
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity as needed */
+            border-radius: 8px;
+            padding: 20px;
+        }
+    
+
 </style>
 </head>
 
 
-<body class="bg-light" style="background: linear-gradient(135deg, #1e3c72, #2a5298, #9b59b6); background-size: cover; 
-             background-position: center; background-attachment: fixed;">
+<body class="bg-light">
     <div class="container p-5 d-flex flex-column align-items-center">
     <?php if ($message): ?>
         <div class="toast align-items-center text-white border-0" 
@@ -226,11 +247,11 @@ select:hover {
             <form id = "myForm" method="post" class="form-control mt-5 p-4 w-100 col-lg-3" 
                 style="position: relative; z-index: 10; height:auto; width:320px; 
                 box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px; 
-                background-color: rgba(0, 0, 0, 0.5); border-radius: 8px; color: white;"onsubmit="validateForm(event)">
+                background-color: rgba(0, 0, 0, 0.7); border-radius: 8px; color: white;"onsubmit="validateForm(event)">
 
                 <div class="row text-center">
                     <i class="fa fa-user-circle-o fa-3x mt-1 mb-2" style="color: #1997CC !important;"></i>
-                    <h5 class="p-4" style="font-weight: 700;">Create Your Account</h5>
+                    <h5 class="p-4" style="font-weight: 700;">Δημιουργία λογαριασμού</h5>
                 </div>
                 <h6>Όσα έχουν * είναι υποχρεωτικά</h6>
         <!-- Name and Surname on the same row -->
@@ -395,7 +416,7 @@ select:hover {
 </div>
         <!-- Submit button -->
         <div class="mb-2 mt-3 d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary"onclick="checkForm()" style="font-weight: 600; background-color: #1997CC !important;">Create Account</button>
+            <button type="submit" class="btn btn-primary"onclick="checkForm()" style="font-weight: 600; background-color: #1997CC !important;">Δημιουργία</button>
         </div>
     
         <!-- Login link -->
