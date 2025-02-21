@@ -122,7 +122,7 @@ if ($banned) {
             
             <?php 
             if (isset($_SESSION['user'])) {
-              echo '<li><a href="../../contact.php">Επικοινωνία</a></li>';
+              echo '<li><a href="contact.php">Επικοινωνία</a></li>';
             }
             ?>
             
@@ -162,7 +162,7 @@ if ($banned) {
 																	
 																	echo '<div class="row-fluid" style="display: grid; grid-template-columns: 1fr auto; justify-items: end;">
 																	
-																	<a class="cta-btn d-none d-sm-block" href="landing_page/login.php">login</a>';
+																	<a class="cta-btn d-none d-sm-block" href="landing_page/login.php">Login</a>';
 																}
 															?>
 														</span>

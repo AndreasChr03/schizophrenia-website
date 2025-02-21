@@ -200,7 +200,7 @@ array_multisort($months, SORT_ASC, $appointmentCounts);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <title>Dashboard</title>
+    <link rel="icon" href="../../assets/img/favicon_32x32.png" sizes="32x32" type="image/png">
     <link rel="stylesheet" href="reports.css">
 </head>
 <body>

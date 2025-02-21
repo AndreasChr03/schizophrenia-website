@@ -44,7 +44,8 @@ $result = $stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <link rel="icon" href="../../assets/img/favicon_32x32.png" sizes="32x32" type="image/png">
+
     <!-- Tab Icon -->
 </head>
 

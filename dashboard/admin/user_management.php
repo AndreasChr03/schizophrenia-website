@@ -85,6 +85,7 @@ $result = $stmt->get_result();
   <link href="assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
   <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
   <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link rel="icon" href="../../assets/img/favicon_32x32.png" sizes="32x32" type="image/png">
 
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
@@ -185,19 +186,19 @@ $result = $stmt->get_result();
                                                     
                                                 </a>
                                                 <div class="dropdown-menu menu dropdown-menu-right" id="action-menu-0-menu">
-                                                <a href="../../myProfile.php" class="dropdown-item menu-action">Profile</a>
+                                                <a href="../../myProfile.php" class="dropdown-item menu-action">Προφίλ</a>
                                                     <?php 
                                                         if($userRole == 1) {
-															echo '<a href="../../dashboard/admin/functions.php" class="dropdown-item menu-action">Dashoboard</a>';
+															echo '<a href="../../dashboard/admin/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
 
 														}
 														else {
-															echo '<a href="../../dashboard/client/functions.php" class="dropdown-item menu-action">Dashoboard</a>';
+															echo '<a href="../../dashboard/client/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
 														}
                                                     
                                                     ?>
                                                     
-                                                    <a href="../../landing_page/logout.php" class="dropdown-item menu-action">Log out</a>
+                                                    <a href="../../landing_page/logout.php" class="dropdown-item menu-action">Αποσύνδεση</a>
                                                </div>
                                             </div>
                                         </div>

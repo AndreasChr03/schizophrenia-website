@@ -165,19 +165,19 @@ if ($banned) {
                                                     
                                                 </a>
                                                 <div class="dropdown-menu menu dropdown-menu-right" id="action-menu-0-menu">
-                                                <a href="../../myProfile.php" class="dropdown-item menu-action">Profile</a>
+                                                <a href="../../myProfile.php" class="dropdown-item menu-action">Προφίλ</a>
                                                     <?php 
                                                         if($userRole == 1) {
-															echo '<a href="../../dashboard/admin/functions.php" class="dropdown-item menu-action">Dashoboard</a>';
+															echo '<a href="../../dashboard/admin/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
 
 														}
 														else {
-															echo '<a href="../../dashboard/client/functions.php" class="dropdown-item menu-action">Dashoboard</a>';
+															echo '<a href="../../dashboard/client/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
 														}
                                                     
                                                     ?>
                                                     
-                                                    <a href="../../landing_page/logout.php" class="dropdown-item menu-action">Log out</a>
+                                                    <a href="../../landing_page/logout.php" class="dropdown-item menu-action">Αποσύνδεση</a>
                                                </div>
                                             </div>
                                         </div>

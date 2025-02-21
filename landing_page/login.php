@@ -10,14 +10,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Validate email
     if (empty(trim($_POST["email"]))) {
-        $email_err = "Please enter your email.";
+        $email_err = "Παρακαλώ εισάγετε το email σας.";
     } else {
         $email = trim($_POST["email"]);
     }
 
     // Validate password
     if (empty(trim($_POST["password"]))) {
-        $password_err = "Please enter your password.";
+        $password_err = "Παρακαλώ εισάγετε το κωδικό σας.";
     } else {
         $password = trim($_POST["password"]);
     }
@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Close statement
             mysqli_stmt_close($stmt);
         } else {
-            $message = "Failed to prepare the statement.";
+            $message = "Συγγνώμη αλλά κάτι πήγε στραβά, δοκιμάστε αργότερα.";
         }
     }
 }

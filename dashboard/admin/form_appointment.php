@@ -96,7 +96,8 @@ $conn->close();
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - Medilab Bootstrap Template</title>
+  <link rel="icon" href="../../assets/img/favicon_32x32.png" sizes="32x32" type="image/png">
+
   
 
   <!-- =======================================================

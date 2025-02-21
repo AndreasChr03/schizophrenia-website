@@ -103,7 +103,7 @@ switch ($action) {
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>SchizoCare</title>
   <link rel="stylesheet" href="assets/css/home.css">
-  <link rel="icon" href="assets/img/favicon_32x32.png" sizes="32x32" type="image/png">
+  
   <style>
   
 .icon-box {
