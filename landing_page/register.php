@@ -121,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     
                 } else {
                 // Prepare and bind
-                $role_id = 1; // Default role, adjust as needed
+                $role_id = 2; // Default role, adjust as needed
                 $stmt = $conn->prepare("INSERT INTO users (name, surname, date_of_birth, nationality, phone, email, password, role_id, gender, registration_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 $stmt->bind_param("ssssissisi", $name, $surname, $dateOfBirth, $nationality, $phone, $email, $hashed_password, $role_id,$gender, $registration_num);
                 

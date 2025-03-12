@@ -28,7 +28,8 @@ $stmt->bind_param("s", $user_email);
 $stmt->execute();
 $stmt->bind_result($banned);
 $stmt->fetch();
-$stmt->close();
+
+
 
 if ($banned) {
     header("Location: error-banned.php");
@@ -177,14 +178,17 @@ switch ($action) {
                 <p>Συγκεντρώνουμε επιστημονικά τεκμηριωμένες πληροφορίες για τη σχιζοφρένεια και τις διαθέσιμες θεραπείες.</p>
               </div>
             </div><!-- End Icon Box -->
-
-            <div class="col-xl-4 d-flex align-items-stretch">
-              <div class="icon-box" data-aos="zoom-out" data-aos-delay="400">
-                <i class="bi bi-gem"></i>
-                <h4>Εργαλεία αυτοαξιολόγησης</h4>
-                <p>Δοκιμάστε το διαδραστικό μας τεστ και δείτε αν τα συμπτώματά σας συνδέονται με τη διαταραχή.</p>
-              </div>
-            </div><!-- End Icon Box -->
+            
+              <div class="col-xl-4 d-flex align-items-stretch">
+              <a href="questionnaire.php" >
+                <div class="icon-box" data-aos="zoom-out" data-aos-delay="400">
+                  <i class="bi bi-gem"></i>
+                  <h4>Εργαλεία αυτοαξιολόγησης</h4>
+                  <p>Δοκιμάστε το διαδραστικό μας τεστ και δείτε αν τα συμπτώματά σας συνδέονται με τη διαταραχή.</p>
+                </div>
+                </a>
+              </div><!-- End Icon Box -->
+            
 
             <div class="col-xl-4 d-flex align-items-stretch">
               <div class="icon-box" data-aos="zoom-out" data-aos-delay="500">
@@ -253,49 +257,62 @@ switch ($action) {
 <!-- /About Section -->
 
     <!-- Stats Section -->
-    <section id="stats" class="stats section light-background">
+    <section id="doctors" class="doctors section light-background">
 
-      <div class="container" data-aos="fade-up" data-aos-delay="100">
+<!-- Section Title -->
+<div class="container section-title" data-aos="fade-up">
+<h2>Οι Γιατροί μας</h2>
+<p>Αυτοί είναι οι γιατροί που είναι εγγεγραμμένοι στην υπηρεσία μας και μπορείτε να επικοινωνήσετε μαζί τους για περισσότερες πληροφορίες.</p>
+</div><!-- End Section Title -->
 
-        <div class="row gy-4">
+<div class="container">
 
-          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-            <i class="fa-solid fa-user-doctor"></i>
-            <div class="stats-item">
-              <span data-purecounter-start="0" data-purecounter-end="85" data-purecounter-duration="1" class="purecounter"></span>
-              <p>Doctors</p>
-            </div>
-          </div><!-- End Stats Item -->
+  <div class="row gy-4">
+      <?php
+      $sql4 = "SELECT 
+      users.name, 
+      users.surname, 
+      users.email, 
+      users.user_id, 
+      doctors_info.doctor_id, 
+      doctors_info.specialization, 
+      doctors_info.information, 
+      doctors_info.photo 
+      FROM users
+      JOIN doctors_info 
+      ON users.user_id = doctors_info.doctor_id
+      WHERE users.role_id = 3";
+      
+      $result4 = $conn->query($sql4);
+      
+      // Έλεγχος αν υπάρχουν αποτελέσματα
+      if ($result4->num_rows > 0) {
+      // Εμφάνιση των αποτελεσμάτων
+      while($row4 = $result4->fetch_assoc()) {
+          echo '<div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">';
+          echo '<div class="team-member d-flex align-items-start">';
+          echo '<div class="pic"><img src="assets/img/doctors/' . $row4["photo"] . '" class="img-fluid" alt=""></div>';
+          echo '<div class="member-info">';
+          echo '<h4>' . $row4["name"] . ' ' . $row4["surname"] . '</h4>';
+          echo '<span>' . $row4["specialization"] . '</span>';
+          echo '<p>' . $row4["information"] . '</p>';
+          echo '<div class="social">';
+          echo '<a href="mailto:'. $row4['email'] .'"><i class="bi bi-envelope"></i></a>';
+          echo '</div>';
+          echo '</div>';
+          echo '</div>';
+          echo '</div>';
+      }
+      } else {
+          echo "Δεν βρέθηκαν γιατροί.";
+      }
+      ?>
 
-          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-            <i class="fa-regular fa-hospital"></i>
-            <div class="stats-item">
-              <span data-purecounter-start="0" data-purecounter-end="18" data-purecounter-duration="1" class="purecounter"></span>
-              <p>Departments</p>
-            </div>
-          </div><!-- End Stats Item -->
+  </div>
 
-          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-            <i class="fas fa-flask"></i>
-            <div class="stats-item">
-              <span data-purecounter-start="0" data-purecounter-end="12" data-purecounter-duration="1" class="purecounter"></span>
-              <p>Research Labs</p>
-            </div>
-          </div><!-- End Stats Item -->
+</div>
 
-          <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-            <i class="fas fa-award"></i>
-            <div class="stats-item">
-              <span data-purecounter-start="0" data-purecounter-end="150" data-purecounter-duration="1" class="purecounter"></span>
-              <p>Awards</p>
-            </div>
-          </div><!-- End Stats Item -->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Stats Section -->
+</section><!-- /Doctors Section -->
 
     
     <!-- <section id="services" class="services section">
@@ -706,14 +723,14 @@ switch ($action) {
 						<?php 
 						
 // SQL query με LEFT JOIN για να εμφανίζονται όλα τα events και αν υπάρχει συμμετοχή να επιστρέφεται
-$sql = "SELECT e.id, e.organiser, e.description, e.date, e.time, 
+$sql = "SELECT e.id, e.organiser, e.description, e.date, e.time, e.submit,
                CASE 
                    WHEN p.email_user IS NOT NULL THEN 1 
                    ELSE 0 
                END AS is_participating
         FROM events e
         LEFT JOIN participants p ON e.id = p.id_event AND p.email_user = ?
-        WHERE e.date >= CURDATE()
+        WHERE e.date >= CURDATE() AND e.submit = 1
         ORDER BY e.date ASC";
 
 $user_email = $_SESSION['user']['email']; 
@@ -781,8 +798,7 @@ if ($result->num_rows > 0) {
           </div>';
 }
 
-$stmt->close();
-$conn->close();
+
 ?>
 
                         </div> <!-- Τέλος swiper-wrapper -->
@@ -898,6 +914,128 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         
 </section><!-- /Testimonials Section -->
+
+<section id="events" class="testimonials section">
+
+    <div class="container section-title" data-aos="fade-up" style="padding-bottom:0px;">
+        <h2>Ιατρικά Νέα</h2>
+        <div class="container" style="display: flex; justify-content:center;">
+
+            
+
+                <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
+                    
+                    <!-- Swiper Container -->
+                    <div class="swiper init-swiper" id="allEvent">
+                        <script type="application/json" class="swiper-config">
+                        {
+                            "loop": true,
+                            "speed": 600,
+                            "autoplay": {
+                                "delay": 20000
+                            },
+                            "slidesPerView": "auto",
+                            "pagination": {
+                                "el": ".swiper-pagination",
+                                "type": "bullets",
+                                "clickable": true
+                            }
+                        }
+                        </script>
+
+                        <div class="swiper-wrapper"> <!-- Επανεισαγωγή του swiper-wrapper -->
+
+                        <?php
+// Έλεγχος σύνδεσης
+if (!$conn) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
+
+$sql2 = "SELECT 
+            u.name, 
+            u.surname, 
+            u.email, 
+            d.photo, 
+            d.specialization, 
+            n.title, 
+            n.description
+        FROM users u
+        JOIN doctors_info d ON u.user_id = d.doctor_id
+        JOIN news n ON d.doctor_id = n.author_id";
+        
+
+$stmt2 = $conn->prepare($sql2);
+if (!$stmt2) {
+    die("SQL Error: " . $conn->error);
+}
+
+$stmt2->execute();
+$result2 = $stmt2->get_result();
+
+
+
+if ($result2->num_rows > 0) {
+    while ($row2 = $result2->fetch_assoc()) {
+      echo '<div class="swiper-slide">';
+      echo '<div class="news-item">';
+      
+      // Επάνω μέρος (Φωτογραφία + Όνομα γιατρού)
+      echo '<div style="display: flex; align-items: center; justify-content: space-between;">';
+      if (!empty($row2["photo"])) {
+          echo '<img src="assets/img/doctors/' . $row2["photo"] . '" alt="Γιατρός" style="width:80px;height:80px;border-radius:50%; margin-left: 20px; margin-top:25px;">';
+      }
+      echo '<div style="flex-grow: 1; text-align: left; margin-left: 15px;">';
+      if (!empty($row2["name"]) && !empty($row2["surname"])) {
+          echo '<h3 style="font-weight: bold; font-size: 18px;">' . htmlspecialchars($row2["name"]) . ' ' . htmlspecialchars($row2["surname"]) . '</h3>';
+      }
+      if (!empty($row2["specialization"])) {
+        echo '<h5>Ειδικότητα: ' . htmlspecialchars($row2["specialization"]) . '</h5>';
+    }
+      echo '</div>';
+      echo '</div>'; // Κλείσιμο πάνω μέρους
+      
+      // Περιεχόμενο άρθρου
+      if (!empty($row2["title"])) {
+          echo '<h3>' . htmlspecialchars($row2["title"]) . '</h3>';
+      }
+      if (!empty($row2["description"])) {
+        echo '<p style = "padding:0px 20px;">
+        <i class="bi bi-quote quote-icon-left"></i>
+        <span>' . htmlspecialchars($row2["description"]) . '</span>
+        <i class="bi bi-quote quote-icon-right"></i>
+      </p>';
+      }
+      
+      // // Υπόλοιπες πληροφορίες γιατρού
+      // if (!empty($row2["email"])) {
+      //     echo '<p><strong>Email:</strong> ' . htmlspecialchars($row2["email"]) . '</p>';
+      // }
+      
+       echo '</div>'; // Κλείσιμο news-item
+        echo '</div>'; // Κλείσιμο swiper-slide
+        }
+    } else {
+        echo '<div class="swiper-slide">'; // Για να μην χαλάσει η δομή
+        echo '<div class="no-events-message">';
+        echo '<i class="bi bi-calendar-x"></i>';
+        echo '<p>Αυτή τη στιγμή δεν υπάρχουν διαθέσιμα events. Παρακαλώ ελέγξτε αργότερα για ενημερώσεις.</p>';
+        echo '</div>';
+        echo '</div>';
+    }
+?>
+</div> <!-- Τέλος swiper-wrapper --> <!-- Τέλος swiper-wrapper -->
+
+                        <div class="swiper-pagination"></div>
+                    </div>
+
+                </div>
+
+            </div>
+		
+        </div>
+        
+  </section>
+
 <?php
     }
     else {
@@ -998,86 +1136,57 @@ document.addEventListener('DOMContentLoaded', function () {
   </main>
 
   <footer id="footer" class="footer light-background">
-
     <div class="container footer-top">
-      <div class="row gy-4">
-        <div class="col-lg-4 col-md-6 footer-about">
-          <a href="index.html" class="logo d-flex align-items-center">
-            <span class="sitename">Medilab</span>
-          </a>
-          <div class="footer-contact pt-3">
-            <p>A108 Adam Street</p>
-            <p>New York, NY 535022</p>
-            <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-            <p><strong>Email:</strong> <span>info@example.com</span></p>
-          </div>
-          <div class="social-links d-flex mt-4">
-            <a href=""><i class="bi bi-twitter-x"></i></a>
-            <a href=""><i class="bi bi-facebook"></i></a>
-            <a href=""><i class="bi bi-instagram"></i></a>
-            <a href=""><i class="bi bi-linkedin"></i></a>
-          </div>
+        <div class="row gy-4 justify-content-between">
+            <div class="col-lg-4 col-md-6 footer-about">
+                <a href="index.html" class="logo d-flex align-items-center">
+                    <span class="sitename">SchizoCare</span>
+                </a>
+                <div class="footer-contact pt-3">
+                    <p>Cyprus</p>
+                    <p>Contact us for more details</p>
+                    <p class="mt-3"><strong>Phone:</strong> <span>+357 5589 55488 55</span></p>
+                    <p><strong>Email:</strong> <span>info@schizocare.com</span></p>
+                </div>
+                
+            </div>
+          
+            <div class="col-lg-6 col-md-6 footer-links">
+                <h4>Quick Links</h4>
+                <div class="row">
+                    <div class="col-6">
+                        <ul class="list-unstyled">
+                            <li><a href="#hero">Αρχική Σελίδα</a></li>
+                            <li><a href="#about">About</a></li>
+                            <li><a href="#about">Ερωτήσεις για την σχιζοφρένεια</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-6">
+                        <ul class="list-unstyled">
+                            <li><a href="#stats">Στατιστικά</a></li>
+                            <li><a href="#questions">Συχνές ερωτήσεις</a></li>
+                            <li><a href="contact.php">Επικοινωνία</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Useful Links</h4>
-          <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">About us</a></li>
-            <li><a href="#">Services</a></li>
-            <li><a href="#">Terms of service</a></li>
-            <li><a href="#">Privacy policy</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Our Services</h4>
-          <ul>
-            <li><a href="#">Web Design</a></li>
-            <li><a href="#">Web Development</a></li>
-            <li><a href="#">Product Management</a></li>
-            <li><a href="#">Marketing</a></li>
-            <li><a href="#">Graphic Design</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Hic solutasetp</h4>
-          <ul>
-            <li><a href="#">Molestiae accusamus iure</a></li>
-            <li><a href="#">Excepturi dignissimos</a></li>
-            <li><a href="#">Suscipit distinctio</a></li>
-            <li><a href="#">Dilecta</a></li>
-            <li><a href="#">Sit quas consectetur</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-2 col-md-3 footer-links">
-          <h4>Nobis illum</h4>
-          <ul>
-            <li><a href="#">Ipsam</a></li>
-            <li><a href="#">Laudantium dolorum</a></li>
-            <li><a href="#">Dinera</a></li>
-            <li><a href="#">Trodelas</a></li>
-            <li><a href="#">Flexo</a></li>
-          </ul>
-        </div>
-
-      </div>
     </div>
 
     <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Medilab</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        <!-- All the links in the footer should remain intact. -->
-        <!-- You can delete the links only if you've purchased the pro version. -->
-        <!-- Licensing information: https://bootstrapmade.com/license/ -->
-        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-      </div>
+        <p>© <strong class="sitename">SchizoCare</strong> 2025 | All Rights Reserved</p>
+        <div class="credits">
+            Designed & Developed by <strong>Antreas Christou</strong>, Student at CUT<br>
+            Template from <a href="https://bootstrapmade.com/" target="_blank">BootstrapMade (Medilab)</a>
+        </div>
     </div>
+</footer>
 
-  </footer>
+
+
+
+
+
 
   <!-- Scroll Top -->
   <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>

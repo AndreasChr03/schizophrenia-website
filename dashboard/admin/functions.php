@@ -221,6 +221,19 @@ $result = $stmt->get_result();
 							  </div>
 							</div>
 						</div>
+						
+						
+						<div class="col-lg-4 col-md-5 fade-right-to-left" style="padding-right:30px;" data-aos="fade-up" data-aos-delay="200">
+							  <div class="service-item position-relative">
+							    <div class="icon">
+							      <i class="fas fa-hospital-user"></i>
+							    </div>
+							    <a href="user_management.php" class="stretched-link">
+							      <h3>Διαχείριση Χρηστών</h3>
+							    </a>
+							    <p>Προβολή, Μπλοκάρισμα και Προώθηση χρηστών</p>
+							  </div>
+							</div>
 							
 							
 

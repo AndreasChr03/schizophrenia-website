@@ -189,12 +189,18 @@ $result = $stmt->get_result();
                                                 <a href="../../myProfile.php" class="dropdown-item menu-action">Προφίλ</a>
                                                     <?php 
                                                         if($userRole == 1) {
-															echo '<a href="../../dashboard/admin/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
-
-														}
-														else {
-															echo '<a href="../../dashboard/client/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
-														}
+                                                            echo '<a href="functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                            
+                                                        }
+                                                        else if($userRole == 2){
+                                                           echo '<a href="functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                                                        }
+                                                        else if($userRole == 3){
+                                                           echo '<a href="functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                                                        }
+                                                        else{
+                                                           echo '<a href="functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                                                        }
                                                     
                                                     ?>
                                                     
@@ -232,12 +238,34 @@ $result = $stmt->get_result();
             placeholder="Αναζήτηση χρηστών..." />
     </div>
     <div class="role">
-        <select id="roleFilter" class="form-control role-select">
-            <option value="">Όλοι οι χρήστες</option>
-            <option value="Admin">Admin</option>
-            <option value="Client">Client</option>
-        </select>
-    </div>
+    <select id="roleFilter" class="form-control role-select">
+        <option value="">Όλοι οι χρήστες</option>
+        <?php
+        
+
+                // Ερώτημα SQL με Prepared Statement
+                $query = "SELECT id, role_name FROM roles";
+        $stmt = $conn->prepare($query);
+        
+        if (!$stmt) {
+            die("Σφάλμα στην προετοιμασία του query: " . $conn->error);
+        }
+        
+        $stmt->execute();
+        $result1 = $stmt->get_result();
+        
+        if ($result1->num_rows === 0) {
+            echo "<option value=''>Δεν βρέθηκαν ρόλοι</option>";
+        }
+        
+        while ($row = $result1->fetch_assoc()) {
+            echo '<option value="' . htmlspecialchars($row['role_name']) . '">' . htmlspecialchars($row['role_name']) . '</option>';
+        }
+
+
+        ?>
+    </select>
+</div>
     <style>
         .user-role,
 .user-banned {
@@ -403,9 +431,25 @@ $result = $stmt->get_result();
                     <div class="form-group">
                         <label for="roleSelect">Επιλέξτε Ρόλο</label>
                         <select class="form-control" id="roleSelect" name="role_id">
-                            <option value="1">Client</option>
-                            <option value="2">Admin</option>
+                            <?php
+                            // Ερώτημα SQL για ανάκτηση ρόλων από τη βάση
+                            $query_roles = "SELECT id, role_name FROM roles";
+                            $stmt_roles = $conn->prepare($query_roles);
+                        
+                            $stmt_roles->execute();
+                            $result_roles = $stmt_roles->get_result();
+                        
+                            if ($result_roles->num_rows === 0) {
+                                echo "<option value=''>Δεν βρέθηκαν ρόλοι</option>";
+                            } else {
+                                while ($row = $result_roles->fetch_assoc()) {
+                                    echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars($row['role_name']) . '</option>';
+                                }
+                            }
+                        
+                            ?>
                         </select>
+
                     </div>
                 </form>
             </div>

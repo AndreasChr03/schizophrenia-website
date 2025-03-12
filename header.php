@@ -162,7 +162,7 @@ if ($banned) {
 																	
 																	echo '<div class="row-fluid" style="display: grid; grid-template-columns: 1fr auto; justify-items: end;">
 																	
-																	<a class="cta-btn d-none d-sm-block" href="landing_page/login.php">Login</a>';
+																	<a class="cta-btn d-none d-sm-block" href="landing_page/login.php">Σύνδεση</a>';
 																}
 															?>
 														</span>
@@ -179,12 +179,19 @@ if ($banned) {
                                                     <a href="myProfile.php" class="dropdown-item menu-action">Προφίλ</a>
                                                     <?php 
                                                         if($userRole == 1) {
-  															echo '<a href="dashboard/admin/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
-
-														}
-														else {
-															echo '<a href="dashboard/client/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
-														}
+                              															echo '<a href="dashboard/admin/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                            
+                            														}
+                            														else if($userRole == 2){
+                            															 echo '<a href="dashboard/client/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                            														}
+                            														else if($userRole == 3){
+                            															 echo '<a href="dashboard/doctor/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                            														}
+                            														else{
+                            															 echo '<a href="dashboard/doctor/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                            														}
+														
                                                     
                                                     ?>
                                                     

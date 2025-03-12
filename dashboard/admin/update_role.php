@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $roleId = intval($_POST['role_id']);
 
     // Έλεγχος για έγκυρα δεδομένα
-    if ($roleId !== 1 && $roleId !== 2) {
+    if ($roleId !== 1 && $roleId !== 2 && $roleId !== 3 && $roleId !== 4) {
         echo json_encode(['success' => false, 'message' => 'Μη έγκυρος ρόλος']);
         exit;
     }
