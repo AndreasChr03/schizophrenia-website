@@ -1,7 +1,10 @@
 <?php
     include "../../config/config.php";
-    
-    if ($_SESSION['user']['role_id'] != 1) { 
+    $name = $_SESSION['user']['name'];
+    $surname = $_SESSION['user']['surname'];
+    $fullName = $name . " " . $surname;
+    $user_id = $_SESSION['user']['user_id'];
+    if ($_SESSION['user']['role_id'] != 3) { 
     
         header("Location: ../../index.php");//prepei na einai o admin
         exit();
@@ -14,21 +17,70 @@
 $action = isset($_GET['action']) ? $_GET['action'] : '';
 
 switch ($action) {
-    case 'submit':
+    case 'delete':
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
-            
+
             $id = $_POST['id']; // Λήψη του ID από τη φόρμα
     
-            $sql = "UPDATE events SET submit = 1 WHERE id = ?";
+            $sql = "DELETE FROM events WHERE id = ?";
             $stmt = $conn->prepare($sql);
             
+            $email = $_SESSION['user']['email'];
+            
+            $action = "Ακύρωση εκδήλωσης";
+            $stmt1 = $conn->prepare("INSERT INTO logs (email, action) VALUES (?, ?)");
+            $stmt1->bind_param("ss", $email, $action);
+            $stmt1->execute();
+    
+            if ($stmt === false) {
+                die("Σφάλμα στην προετοιμασία του ερωτήματος: " . $conn->error);
+            }
+    
+            $stmt->bind_param("i", $id);
+    
+            if ($stmt->execute()) {
+                $successMessage = "Η ερώτηση διαγράφηκε επιτυχώς!";
+            } else {
+                $errorMessage = "Σφάλμα κατά την εκτέλεση του ερωτήματος: " . $stmt->error;
+            }
+    
+            $stmt->close();
+        } else {
+            $errorMessage = "Δεν παρέχεται έγκυρο ID για διαγραφή.";
+        }
+        break;
+
+    case 'update':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['title'], $_POST['date'], $_POST['time'], $_POST['description'])) {
+            // Λήψη δεδομένων από το POST
+            $id = $_POST['id']; // Λήψη ID από POST
+            $title = $_POST['title']; // Λήψη τίτλου από POST
+            $date = $_POST['date']; // Λήψη ημερομηνίας από POST
+            $time = $_POST['time']; // Λήψη ώρας από POST
+            $description = $_POST['description']; // Λήψη περιγραφής από POST
+            
+        
+            // Ενημέρωση της βάσης δεδομένων
+            $sql = "UPDATE events SET title = ?, date = ?, time = ?, description = ?  WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            
+            $email = $_SESSION['user']['email'];
+            
+            $action = "Ενημέρωση εκδήλωσης";
+            $stmt1 = $conn->prepare("INSERT INTO logs (email, action) VALUES (?, ?)");
+            $stmt1->bind_param("ss", $email, $action);
+            $stmt1->execute();
+        
+            if ($stmt === false) {
+                die("Error in preparing the query: " . $conn->error);
+            }
         
             // Δέσιμο παραμέτρων
-            $stmt->bind_param("i",$id);
+            $stmt->bind_param("ssssi", $title, $date, $time, $description, $id);
         
             // Εκτέλεση του ερωτήματος
             if ($stmt->execute()) {
-                $successMessage = "Η εκδήλωση επιβεβαιώθηκε επιτυχώς!";
+                $successMessage = "Η εκδήλωση ενημερώθηκε επιτυχώς!";
             } else {
                 $errorMessage = "Σφάλμα κατά την εκτέλεση του ερωτήματος: " . $stmt->error;
             }
@@ -37,9 +89,49 @@ switch ($action) {
             $stmt->close();
         }
         break;
+
         
         
-    
+    case 'add':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['title'], $_POST['date'], $_POST['time'], $_POST['description'])) {
+            // Λήψη των δεδομένων από το POST
+            $title = $_POST['title']; // Τίτλος από τη φόρμα
+            $date = $_POST['date'];   // Ημερομηνία από τη φόρμα
+            $time = $_POST['time'];   // Ώρα από τη φόρμα
+            $description = $_POST['description']; // Περιγραφή από τη φόρμα
+            
+        
+            
+        
+            // Εισαγωγή δεδομένων στη βάση
+            $sql = "INSERT INTO events (title, date, time, description, user_id) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            
+            $email = $_SESSION['user']['email'];
+            
+            $action = "Δημιουργία νέας εκδήλωσης";
+            $stmt1 = $conn->prepare("INSERT INTO logs (email, action) VALUES (?, ?)");
+            $stmt1->bind_param("ss", $email, $action);
+            $stmt1->execute();
+        
+            if ($stmt === false) {
+                die("Σφάλμα στην προετοιμασία του ερωτήματος: " . $conn->error);
+            }
+        
+            // Δέσμευση των παραμέτρων (μετά από έλεγχο για αποφυγή SQL injection)
+            $stmt->bind_param("ssssi", $title, $date, $time, $description, $user_id);
+        
+            if ($stmt->execute()) {
+                $successMessage =  "Η εκδήλωση προστέθηκε επιτυχώς!";
+            } else {
+                $errorMessage = "Σφάλμα κατά την εκτέλεση του ερωτήματος: ";
+            }
+        
+            // Κλείσιμο του statement και της σύνδεσης
+            $stmt->close();
+            $conn->close();
+        }
+        break;
         
         case 'participate':
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -165,6 +257,7 @@ switch ($action) {
     padding: 20px;  /* Αυξάνει το padding για μεγαλύτερη απόσταση */
     line-height: 2; /* Αυξάνει το ύψος των γραμμών για πιο ευανάγνωστο κείμενο */
     display: block; /* Επιτρέπει στη στήλη να επεκτείνεται ανάλογα με το περιεχόμενο */
+    
 }
 
 /* Αυξάνει το πλάτος της στήλης περιγραφής */
@@ -188,7 +281,11 @@ switch ($action) {
 <?php endif; ?>
 <div class="container_table">
     <h2 style="text-align: center; padding-bottom: 40px;">Εκδηλώσεις</h2>
-    
+    <div class="add">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <i class="bi bi-plus-circle"></i> Νέα Εκδήλωση
+    </button>
+</div>
 
     
     
@@ -203,10 +300,10 @@ switch ($action) {
           <th>Ώρα</th>
           <th>Περιγραφή</th>
           <th>Συμμετέχοντες</th>
-          <!-- <th>Συμμετοχή</th> -->
-          <th>Επιβεβαίωση</th>
-          
-          
+          <th>Συμμετοχή</th>
+          <th>Διαγραφή</th>
+          <th>Ενημέρωση</th>
+
         </tr>
       </thead>
       <tbody>
@@ -214,24 +311,18 @@ switch ($action) {
         
         $sql1 = "
     SELECT e.*, 
-       u.name AS organizer_name, 
-       u.surname AS organizer_surname,
-       u.email AS organizer_email, 
-       COUNT(p1.email_user) AS participant_count, 
-       CASE 
-           WHEN p2.email_user IS NOT NULL THEN 1
-           ELSE 0
-       END AS is_participating
-FROM events e
-LEFT JOIN users u 
-       ON e.user_id = u.user_id
-LEFT JOIN participants p1 
-       ON e.id = p1.id_event  
-LEFT JOIN participants p2 
-       ON e.id = p2.id_event AND p2.email_user = ?  
-WHERE e.date > CURDATE()
-GROUP BY e.id, u.name, u.email, p2.email_user;
-
+           COUNT(p1.email_user) AS participant_count, 
+           CASE 
+               WHEN p2.email_user IS NOT NULL THEN 1
+               ELSE 0
+           END AS is_participating
+    FROM events e
+    LEFT JOIN participants p1 
+           ON e.id = p1.id_event  
+    LEFT JOIN participants p2 
+           ON e.id = p2.id_event AND p2.email_user = ?  
+    WHERE e.date > CURDATE() AND user_id = ?
+    GROUP BY e.id, p2.email_user
 ";
 
 $stmt = $conn->prepare($sql1);
@@ -239,7 +330,7 @@ if ($stmt === false) {
     die("Error in preparing the query: " . $conn->error);
 }
 
-$stmt->bind_param('s', $user_email);
+$stmt->bind_param('si', $user_email,$user_id);
 $stmt->execute();
 
 // Ανάκτηση αποτελεσμάτων
@@ -247,53 +338,57 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $ctr = 0;
     while ($row = $result->fetch_assoc()) {
-        // $isParticipating = $row['is_participating'];
+        $isParticipating = $row['is_participating'];
         $participantCount = $row['participant_count']; // Αριθμός συμμετεχόντων
         $ctr++;
         
         echo "<tr>";
         echo "<td>" . $ctr . "</td>";
         echo "<td>" . htmlspecialchars($row['title']) . "</td>";
-        echo "<td>" . htmlspecialchars($row['organizer_name']) . " " . htmlspecialchars($row['organizer_surname']) . "</td>";
+        echo "<td>" . htmlspecialchars($fullName) . "</td>";
         echo "<td>" . htmlspecialchars($row['date']) . "</td>";
         echo "<td>" . htmlspecialchars($row['time']) . "</td>";
         echo "<td>" . htmlspecialchars($row['description']) . "</td>";
         echo "<td>" . $participantCount . "</td>"; 
 
-            // if ($isParticipating) {
-            //     // Ο χρήστης συμμετέχει, εμφάνιση κουμπιού για ακύρωση συμμετοχής
-            //     echo "<td><button class='btn btn-danger btn-sm' data-bs-toggle='modal' data-bs-target='#cancelModal' 
-            //             data-email='" . $user_email . "' 
-            //             data-id='" . $row['id'] . "' 
-            //             data-action='cancel'>
-            //             <i class='bi bi-x-circle'></i> Ακύρωση Συμμετοχής
-            //         </button></td>";
-            // } else {
-            //     // Ο χρήστης δεν συμμετέχει, εμφάνιση κουμπιού για συμμετοχή
-            //     echo "<td><button class='btn btn-success btn-sm' data-bs-toggle='modal' data-bs-target='#participationModal' 
-            //             data-email='" . $user_email . "' 
-            //             data-id='" . $row['id'] . "' 
-            //             data-action='participate'>
-            //             <i class='bi bi-check-circle'></i> Συμμετοχή
-            //         </button></td>";
-            // }
-            
-                // Προσθήκη κουμπιού για modal ενημέρωσης
-                echo "<td>";
-            if ($row['submit'] == 1) {
-                // Αν έχει ήδη επιβεβαιωθεί, εμφάνισε ένα απενεργοποιημένο κουμπί
-                echo "<button class='btn btn-success btn-sm' disabled>
-                        <i class='bi bi-check-circle'></i> Επιβεβαιώθηκε
-                      </button>";
+            if ($isParticipating) {
+                // Ο χρήστης συμμετέχει, εμφάνιση κουμπιού για ακύρωση συμμετοχής
+                echo "<td><button class='btn btn-danger btn-sm' data-bs-toggle='modal' data-bs-target='#cancelModal' 
+                        data-email='" . $user_email . "' 
+                        data-id='" . $row['id'] . "' 
+                        data-action='cancel'>
+                        <i class='bi bi-x-circle'></i> Ακύρωση Συμμετοχής
+                    </button></td>";
             } else {
-                // Αν δεν έχει επιβεβαιωθεί, εμφάνισε το κουμπί για επιβεβαίωση
-                echo "<button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#submitModal' 
-                        data-id='" . $row['id'] . "' data-action='submit'>
-                        <i class='bi bi-pencil'></i> Επιβεβαίωση
-                      </button>";
+                // Ο χρήστης δεν συμμετέχει, εμφάνιση κουμπιού για συμμετοχή
+                echo "<td><button class='btn btn-success btn-sm' data-bs-toggle='modal' data-bs-target='#participationModal' 
+                        data-email='" . $user_email . "' 
+                        data-id='" . $row['id'] . "' 
+                        data-action='participate'>
+                        <i class='bi bi-check-circle'></i> Συμμετοχή
+                    </button></td>";
             }
-            echo "</td>";
-
+            // Προσθήκη κουμπιών για διαγραφή
+            echo "<td>
+            <button class='btn btn-danger btn-sm' data-bs-toggle='modal' data-bs-target='#deleteModal' 
+                data-id='" . $row['id'] . "' 
+                data-action='delete'>
+                <i class='bi bi-trash'></i> Διαγραφή
+            </button>
+          </td>";
+    
+    // Προσθήκη κουμπιού για modal ενημέρωσης
+    echo "<td>
+        <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#updateModal' 
+            data-id='" . $row['id'] . "' 
+            data-title='" . htmlspecialchars($row['title']) . "' 
+            data-date='" . htmlspecialchars($row['date']) . "' 
+            data-time='" . htmlspecialchars($row['time']) . "' 
+            data-description='" . htmlspecialchars($row['description']) . "' 
+            data-action='update'>
+            <i class='bi bi-pencil'></i> Ενημέρωση
+        </button>
+      </td>";
 
 echo "</tr>";
         }
@@ -307,8 +402,100 @@ echo "</tr>";
     </table>
 </div>
 
+<!-- modal -->
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- Header Modal -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Προσθήκη Νέας Εκδήλωσης</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Body Modal -->
+            <div class="modal-body">
+                <form action="events.php?action=add" method="POST">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Τίτλος:</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Ημερομηνία:</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="time" class="form-label">Ώρα:</label>
+                        <input type="time" class="form-control" id="time" name="time" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Περιγραφή:</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Προσθήκη Εκδήλωσης</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+        
+        
+        
+        <!-- update modal -->
+
+        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- Header Modal -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel">Ενημέρωση Εκδήλωσης</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Body Modal -->
+            <div class="modal-body">
+                <form id="updateForm" method="POST" action="events.php?action=update">
+                    <!-- Κρυφό πεδίο για το ID -->
+                    <input type="hidden" id="eventId" name="id" value="">
+
+                    <!-- Πεδίο για τον Τίτλο -->
+                    <div class="mb-3">
+                        <label for="eventTitle" class="form-label">Τίτλος:</label>
+                        <input type="text" class="form-control" id="eventTitle" name="title" required>
+                    </div>
+
+                    <!-- Πεδίο για την Ημερομηνία -->
+                    <div class="mb-3">
+                        <label for="eventDate" class="form-label">Ημερομηνία:</label>
+                        <input type="date" class="form-control" id="eventDate" name="date" required>
+                    </div>
+
+                    <!-- Πεδίο για την Ώρα -->
+                    <div class="mb-3">
+                        <label for="eventTime" class="form-label">Ώρα:</label>
+                        <input type="time" class="form-control" id="eventTime" name="time" required>
+                    </div>
+
+                    <!-- Πεδίο για την Περιγραφή -->
+                    <div class="mb-3">
+                        <label for="eventDescription" class="form-label">Περιγραφή:</label>
+                        <textarea class="form-control" id="eventDescription" name="description" rows="3"></textarea>
+                    </div>
+
+                    <!-- Κουμπί Αποθήκευσης -->
+                    <button type="submit" class="btn btn-primary">Αποθήκευση</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
 <!-- Modal Διαγραφής -->
-<div class="modal fade" id="submitModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -316,14 +503,14 @@ echo "</tr>";
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Είστε σίγουροι ότι θέλετε να επιβεβαιώσετε αυτή την εκδήλωση;
+        Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το event;
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" style= "margin:0px;" data-bs-dismiss="modal">Ακύρωση</button>
-        <form id="deleteForm" method="POST" action="events.php?action=submit">
-          <input type="hidden" name="action" value="submit">
-          <input type="hidden" name="id" id="submitId" value="">
-          <button type="submit" class="btn btn-primary">Επιβεβαίωση</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ακύρωση</button>
+        <form id="deleteForm" method="POST" action="events.php?action=delete">
+          <input type="hidden" name="action" value="delete">
+          <input type="hidden" name="id" id="deleteId" value="">
+          <button type="submit" class="btn btn-danger">Διαγραφή</button>
         </form>
       </div>
     </div>
@@ -407,7 +594,41 @@ echo "</tr>";
 <script>
 
 
-    
+    var updateModal = document.getElementById('deleteModal');
+    updateModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget; // Κουμπί που άνοιξε το modal
+        var id = button.getAttribute('data-id');
+        var question = button.getAttribute('data-question');
+        
+        // Ενημέρωση των input πεδίων του modal
+        var modalIdInput = updateModal.querySelector('#deleteId');
+        var modalQuestionInput = updateModal.querySelector('#updateQuestion');
+
+        modalIdInput.value = id;
+        modalQuestionInput.value = question;
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const updateModal = document.getElementById('updateModal');
+    updateModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget; // Η μεταβλητή που παραλαμβάνει το κουμπί που άνοιξε το modal
+        const id = button.getAttribute('data-id');
+        const title = button.getAttribute('data-title');
+        const date = button.getAttribute('data-date');
+        const time = button.getAttribute('data-time');
+        const description = button.getAttribute('data-description');
+        const organiser = button.getAttribute('data-organiser');
+
+        // Γέμισμα των input του modal
+        document.getElementById('eventId').value = id;
+        document.getElementById('eventTitle').value = title;
+        document.getElementById('eventDate').value = date;
+        document.getElementById('eventTime').value = time;
+        document.getElementById('eventDescription').value = description;
+        document.getElementById('eventOrganiser').value = organiser;
+    });
+});
 
 document.addEventListener('DOMContentLoaded', function () {
     var participationModal = document.getElementById('participationModal');
@@ -435,20 +656,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('cancelIdEvent').value = id;
     });
 });
-document.addEventListener("DOMContentLoaded", function() {
-    var submitModal = document.getElementById('submitModal');
-    submitModal.addEventListener('show.bs.modal', function(event) {
-        var button = event.relatedTarget; // Το κουμπί που άνοιξε το modal
-        var id = button.getAttribute('data-id'); // Παίρνουμε το ID από το κουμπί
-        var inputField = document.getElementById('submitId'); // Βρίσκουμε το hidden input
-        inputField.value = id; // Ορίζουμε το ID στο input
-    });
-});
-
-
-
-
-    $(document).ready(function() {
+$(document).ready(function() {
         // Αρχικοποίηση του DataTable για το πίνακα
         $('#questionsTable').DataTable({
             "paging": true,      // Ενεργοποιεί την πλοήγηση (pagination)

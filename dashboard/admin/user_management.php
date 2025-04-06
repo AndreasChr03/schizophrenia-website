@@ -313,9 +313,9 @@ $result = $stmt->get_result();
                                 <a href="#" data-toggle="modal" data-target="#block" title="Block" data-user-email="<?php echo $row['email']; ?>" data-user-banned="<?php echo $row['banned']; ?>">
                                     <i class="bi bi-x-circle"></i>
                                 </a>
-                                <a href="#" data-toggle="modal" data-target="#upgrade" title="Upgrade to Admin" data-user-id="<?php echo $row['user_id']; ?>" data-user-name="<?php echo $row['name']; ?>" data-role-id="<?php echo $row['role_id']; ?>">
-                                    <i class="bi bi-arrow-up-circle"></i>
-                                </a>
+                                <!-- <a href="#" data-toggle="modal" data-target="#upgrade" title="Upgrade to Admin" data-user-id="<?php echo $row['user_id']; ?>" data-user-name="<?php echo $row['name']; ?>" data-role-id="<?php echo $row['role_id']; ?>"> -->
+                                    <!-- <i class="bi bi-arrow-up-circle"></i> -->
+                                <!-- </a> -->
                             </div>
                         </div>
                     </div>
@@ -562,11 +562,14 @@ $('#view').on('show.bs.modal', function (event) {
                 $('#registrationNum').text(data.registration_number); // Εμφανίζουμε το email
                 $('#city').text(data.nationality);
                 if (data.role_id == 1) {
-                    $('#role_id').text('Client'); 
-                } else if (data.role_id == 2) {
                     $('#role_id').text('Admin'); 
+                } else if (data.role_id == 2) {
+                    $('#role_id').text('Client'); 
+                    
+                } else if (data.role_id == 3) {
+                    $('#role_id').text('Doctor'); 
                 } else {
-                    $('#role_id').text('Κάτι πήγε στραβά!');
+                    $('#role_id').text('Volunteer');
                 }
             }
         },

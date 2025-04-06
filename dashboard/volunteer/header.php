@@ -168,17 +168,17 @@ if ($banned) {
                                                     $userRole = $_SESSION['user']['role_id'];
                                                     
                                                     if($userRole == 1) {
-                                                      echo '<a href="dashboard/admin/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                                                      echo '<a href="functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
                       
                                                   }
                                                   else if($userRole == 2){
-                                                     echo '<a href="dashboard/client/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                                                     echo '<a href="functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
                                                   }
                                                   else if($userRole == 3){
-                                                     echo '<a href="dashboard/doctor/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                                                     echo '<a href="functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
                                                   }
                                                   else{
-                                                     echo '<a href="dashboard/doctor/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                                                     echo '<a href="functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
                                                   }
                                                     
                                                     ?>

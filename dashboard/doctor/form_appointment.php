@@ -1,7 +1,7 @@
 <?php
 include "../../config/config.php";
 
-if ($_SESSION['user']['role_id'] != 1) { 
+if ($_SESSION['user']['role_id'] != 3) { 
     
     header("Location: ../../index.php");//prepei na einai o admin
     exit();
@@ -14,10 +14,10 @@ if (!isset($_SESSION['user'])) {
 
 
 if (isset($_SESSION['user'])) {
-    if (isset($_GET['user_id'])) {
+    if (isset($_GET['registration_number'])) {
         $user = $_SESSION['user']; 
     	$userName = $user['name'];
-        $user_id = $_GET['user_id'];
+        $user_id = $_GET['registration_number'];
         $user_role = $user['role_id'];
     
     
@@ -109,6 +109,42 @@ $conn->close();
   ======================================================== -->
 </head>
 <style>
+ .modal-backdrop {
+            z-index: 1040 !important; /* Χαμηλότερο z-index για το backdrop */
+            background-color: rgba(0, 0, 0, 0.5) !important; /* Ρυθμίζει το γκρίζο φόντο */
+        }
+        
+        /* Ρύθμιση του modal */
+        .modal-dialog {
+            z-index: 1050 !important; /* Υψηλότερο z-index για το modal */
+            margin-top: 10%;
+        }
+        
+        /* Ρύθμιση του modal-content για καλύτερη εμφάνιση */
+        .modal-content {
+            background-color: #fff;
+            border-radius: 8px;
+        }
+/* Εφαρμογή χρωμάτων κοντά στο μπλε */
+.table {
+      border: 1px solid #007BFF;
+    }
+
+    .table th, .table td {
+      background-color: #f0f8ff; /* Πολύ ανοιχτό μπλε */
+      color: #003366; /* Σκούρο μπλε */
+    }
+
+    .table thead {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    /* Κεντρικοποίηση του πίνακα στον οριζόντιο άξονα */
+    .container_table {
+      max-width: 1400px;
+      margin: 50px auto;  /* Κεντράρει το container στην σελίδα */
+    }
 .form-section {
     margin-bottom: 20px;
 }
@@ -153,7 +189,7 @@ input.form-control {
 <?php endif; ?>
 
   <div class="container mt-5">
-    <h1 class="text-center mb-4">Φόρμα Αξιολόγησης Ψυχιάτρου</h1>
+    <h1 class="text-center mb-4">Φόρμα Αξιολόγησης Ψυχιάτρου<?php $user_id?></h1>
     <form action="form_appointment.php" method="POST" class="needs-validation" novalidate>
 
         <!-- Appointment and User Details -->
@@ -165,10 +201,94 @@ input.form-control {
                         <h4 class="card-title mb-0">Πληροφορίες Ραντεβού</h4>
                     </div>
                     <div class="card-body">
-                        <div class="mb-3">
-                            <label for="appointmentDate" class="form-label">Ημερομηνία Ραντεβού</label>
-                            <input type="date" class="form-control" id="appointmentDate" name="appointmentDate" required>
-                            <div class="invalid-feedback">Παρακαλώ εισάγετε ημερομηνία ραντεβού.</div>
+                                        <div class="mb-3">
+                                            <label for="appointmentDate" class="form-label">Ημερομηνία Ραντεβού</label>
+                                            <input type="date" class="form-control" id="appointmentDate" name="appointmentDate" required>
+                                            <div class="invalid-feedback">Παρακαλώ εισάγετε ημερομηνία ραντεβού.</div>
+                                        </div>
+                                        <table id="questionsTable" class="table table-bordered table-striped">
+                      <thead>
+                        <tr>
+                          <th>Ημερομηνία</th>
+                          <th>Προβολή</th>
+                
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php
+                        
+                        $sql1 = "
+                    SELECT 
+                        u.registration_number,
+                        u.email,
+                        a.clientEmail,
+                        a.appointmentDate
+                        
+                        
+                    FROM 
+                        users u
+                    JOIN 
+                        appointment_details a
+                    ON 
+                        u.email = a.clientEmail
+                        WHERE u.email = ?
+                    ORDER BY 
+                        a.appointmentDate DESC;
+                ";
+                
+                $stmt = $conn->prepare($sql1);
+                if ($stmt === false) {
+                    die("Error in preparing the query: " . $conn->error);
+                }
+                
+                $stmt->bind_param('s', $email);
+                $stmt->execute();
+                
+                // Ανάκτηση αποτελεσμάτων
+                $result = $stmt->get_result();
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>";
+                        
+                        echo "<td>" . htmlspecialchars($row['appointmentDate']) . "</td>";
+                    
+                    // Προσθήκη κουμπιού για modal ενημέρωσης
+                    echo "<td>
+                        <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#viewModal' 
+                            data-id='" . htmlspecialchars($row['registration_number']) . "'  
+                            data-date='" . htmlspecialchars($row['appointmentDate']) . "'>
+                            <i class='bi bi-eye'></i> Προβολή
+                        </button>
+                      </td>";
+                
+                echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='4'>Δεν βρέθηκαν τα προηγούμενα ραντεβού.</td></tr>";
+                    }
+                
+                    $stmt->close();
+                    ?>
+                      </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal Διαγραφής -->
+            <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="viewModalLabel">Επιβεβαίωση Προβολής</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Είστε σίγουρος ότι θέλετε να δείτε τα δεδομένα του ραντεβού για την ημερομηνία <strong><span id="modalDate"></span></strong>;</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ακύρωση</button>
+                            <a id="confirmViewButton" href="#" class="btn btn-primary">Προβολή</a>
                         </div>
                     </div>
                 </div>
@@ -296,23 +416,56 @@ input.form-control {
                 </div>
             </div>
         </div>
+        
+        <?php
+            $disabled = ''; // Αν έχει τιμή 'disabled', το κουμπί θα είναι ανενεργό
+            
+            if (isset($conn, $user_id)) {
+                $check_query = "
+                    SELECT COUNT(*) as total 
+                    FROM appointment_details ad
+                    JOIN users u ON ad.clientEmail = u.email
+                    WHERE u.registration_number = ? AND ad.appointmentDate < CURDATE()
+                ";
+            
+                if ($stmt = $conn->prepare($check_query)) {
+                    $stmt->bind_param("i", $user_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $row = $result->fetch_assoc();
+                    
+                    // Αν δεν υπάρχουν προηγούμενα ραντεβού, απενεργοποίησε το κουμπί
+                    if ($row['total'] == 0) {
+                        $disabled = 'disabled';
+                    }
+                }
+            }
+            ?>
+        
+        
 
         <!-- Navigation Buttons -->
         <div class="d-flex justify-content-between mb-5">
-            <button type="button" class="btn btn-secondary" onclick="history.back()">Προηγούμενη Συνάντηση</button>
-            <button type="submit" class="btn btn-primary">Υποβολή</button>
+                <!-- <button type="button" class="btn btn-secondary" 
+                onclick="redirectToAppointmentPage(<?php echo $user_id; ?>)" 
+                <?php echo $disabled; ?>>
+            Προηγούμενη Συνάντηση
+        </button> -->
+        <button type="submit" class="btn btn-primary">Υποβολή</button>
         </div>
-    </form>
-</div>
 
-
-
+<script>
+    function redirectToAppointmentPage(userId) {
+        var value= 0; 
+        window.location.href = 'previous_appointment.php?user_id=' + userId + '&value=' + value;
+    }
+</script>
 
     
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Επαλήθευση φόρμας Bootstrap
+        
         (function () {
             'use strict';
             const forms = document.querySelectorAll('.needs-validation');
@@ -338,6 +491,23 @@ input.form-control {
             successMessage.style.display = 'none';
         }
     }, 3000); // 3000 ms = 3 δευτερόλεπτα
+</script>
+
+<script>
+    // Φόρτωση στοιχείων στο modal κατά το άνοιγμα
+    const viewModal = document.getElementById('viewModal');
+    viewModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const userId = button.getAttribute('data-id');
+        const date = button.getAttribute('data-date');
+
+        // Ενημέρωση του κειμένου στο modal
+        document.getElementById('modalDate').textContent = date;
+
+        // Ρύθμιση του κουμπιού επιβεβαίωσης με τα σωστά URL params
+        const confirmButton = document.getElementById('confirmViewButton');
+        confirmButton.href = `other_appointment.php?registration_number=${userId}&date=${date}`;
+    });
 </script>
 </body>
 </html>

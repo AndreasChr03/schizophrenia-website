@@ -25,6 +25,11 @@ $sql = "SELECT registration_number FROM users";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $result = $stmt->get_result();
+
+$registrationNumbers = [];
+while ($row = $result->fetch_assoc()) {
+    $registrationNumbers[] = $row['registration_number'];
+}
  
  ?>
  <!DOCTYPE html>
@@ -61,7 +66,41 @@ $result = $stmt->get_result();
   <link href="../../assets/css/main.css" rel="stylesheet">
   <style>
   
-  
+  #dropdownMenu {
+            max-height: 175px; /* Περιορισμός ύψους για 7 εγγραφές */
+            overflow-y: auto;  /* Ενεργοποίηση scroll bar */
+            position: absolute; /* Για να εμφανίζεται κάτω από το input */
+            width: 100%; /* Ίδιο πλάτος με το input */
+            background-color: white;
+            border: 1px solid #ccc;
+            z-index: 1055; /* Πάνω από το modal (1050 είναι το modal default) */
+            display: none; /* Κρύβεται αρχικά */
+        }
+
+        #dropdownMenu div {
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+
+        #dropdownMenu div:hover {
+            background-color: #f0f0f0;
+        }
+.modal-backdrop {
+    z-index: 1040 !important; /* Χαμηλότερο z-index για το backdrop */
+    background-color: rgba(0, 0, 0, 0.5) !important; /* Ρυθμίζει το γκρίζο φόντο */
+}
+
+/* Ρύθμιση του modal */
+.modal-dialog {
+    z-index: 1050 !important; /* Υψηλότερο z-index για το modal */
+    margin-top: 10%;
+}
+
+/* Ρύθμιση του modal-content για καλύτερη εμφάνιση */
+.modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+}
 
     .row-fluid {
         margin-left: 60px !important; /* Αλλάζεις την τιμή όπως χρειάζεται */
@@ -141,21 +180,37 @@ $result = $stmt->get_result();
 						
 						    
 						
-						    <div class="col-lg-4 col-md-5 fade-right-to-left" data-aos="fade-up" data-aos-delay="200">
-							  <div class="service-item position-relative">
-							    <div class="icon">
-							      <i class="fas fa-hospital-user"></i>
+						    <div class="col-lg-4 col-md-5" style="padding-right:30px;" data-aos="fade-up" data-aos-delay="200">
+							    <div class="service-item position-relative">
+							        <div class="icon">
+							            <i class="fas fa-notes-medical"></i>
+							        </div>
+							        <!-- Το κουμπί παραμένει ως έχει αλλά ανοίγει το modal αντί να πηγαίνει στη σελίδα -->
+							        <a href="events.php" class="stretched-link">
+							            <h3>Εκδηλώσεις</h3>
+							        </a>
+							        <p>Προσθέστε, Διαγράψτε και Ενημερώστε Εκδηλώσεις</p>
 							    </div>
-							    <a href="client_medicines.php" class="stretched-link">
-							      <h3>Ιστορικό Ραντεβού Χρηστη</h3>
-							    </a>
-							    <p>Προβολή του ιστορικού (Μελλοντικά ραντεβού)</p>
-							  </div>
 							</div>
+							
+							
+							<div class="col-lg-4 col-md-5" style="padding-right:30px;" data-aos="fade-up" data-aos-delay="300">
+							    <div class="service-item position-relative">
+							        <div class="icon">
+							            <i class="fas fa-notes-medical"></i>
+							        </div>
+							        <!-- Το κουμπί παραμένει ως έχει αλλά ανοίγει το modal αντί να πηγαίνει στη σελίδα -->
+							        <a href="reports.php" class="stretched-link">
+							            <h3>Στατιστικά Στοιχεία</h3>
+							        </a>
+							        <p>Προβολή Στατιστικών Στοιχείων</p>
+							    </div>
+							</div>
+							
 						</div>
 						
 						<div class="row gy-4">
-							  <div class="col-lg-4 col-md-5 fade-right-to-left" style="padding-right: 25px;" data-aos="fade-up" data-aos-delay="300">
+							  <div class="col-lg-4 col-md-5 fade-right-to-left" style="padding-right: 25px;" data-aos="fade-up" data-aos-delay="400">
 							    <div class="service-item position-relative">
 							      <div class="icon">
 							        <i class="fas fa-chart-bar"></i> <!-- Εικονίδιο για ραβδόγραμμα -->
@@ -168,25 +223,99 @@ $result = $stmt->get_result();
 							    </div>
 							  </div>
 							  
-							<div class="col-lg-4 col-md-5 fade-right-to-left" data-aos="fade-up" data-aos-delay="400">
-							  <div class="service-item position-relative">
-							    <div class="icon">
-							      <i class="fas fa-calendar-alt"></i> <!-- Εικονίδιο ημερολογίου -->
+                <div class="col-lg-4 col-md-5" style="padding-right:30px;" data-aos="fade-up" data-aos-delay="500">
+							    <div class="service-item position-relative">
+							        <div class="icon">
+							            <i class="fas fa-notes-medical"></i>
+							        </div>
+							        <!-- Το κουμπί παραμένει ως έχει αλλά ανοίγει το modal αντί να πηγαίνει στη σελίδα -->
+							        <a href="#" class="stretched-link" data-toggle="modal" data-target="#exampleModal">
+							            <h3>Φόρμα Αξιολόγησης Πελατών</h3>
+							        </a>
+							        <p>Αξιολόγηση και Προβολή Προηγούμενων Ραντεβού  </p>
 							    </div>
-							    <a href="events.php" class="stretched-link">
-							      <h3>Εκδηλώσεις</h3>
-							    </a>
-							    <p>Προσθέστε, Διαγράψτε και Ενημερώστε Εκδηλώσεις σας</p>
-							  </div>
 							</div>
-						</div>
 					</div>
+				</div>
 							
 							
 	</section>
+	
+	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- Header Modal -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Επιλέξτε Χρήστη</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Body Modal -->
+            <div class="modal-body">
+                <div id="error-message" class="alert alert-danger d-none" role="alert">
+                    Το Registration Number δεν υπάρχει στο σύστημα!
+                </div>
+                <form id="userForm">
+                    <div class="form-group">
+                        <label for="selectedUser">Επιλέξτε Registration Number</label>
+                        <input list="registrationNumbers" id="selectedUser" name="selectedUser" class="form-control" placeholder="Επιλέξτε ή γράψτε">
+                        <datalist id="registrationNumbers">
+                            <?php foreach ($registrationNumbers as $regNum): ?>
+                                <option value="<?= htmlspecialchars($regNum) ?>"></option>
+                            <?php endforeach; ?>
+                        </datalist>
+                    </div>
+
+                    <!-- Alert Message για το error -->
+                    
+                </form>
+            </div>
+
+            <!-- Footer Modal -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Κλείσιμο</button>
+                <button type="button" class="btn btn-primary" onclick="submitUser()">Επιλογή Χρήστη</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitUser(event) {
+        // Ελέγχουμε αν το event υπάρχει πριν το χρησιμοποιήσουμε
+        if (event) {
+            event.preventDefault();
+        }
+
+        // Παίρνουμε το επιλεγμένο registration number
+        const selectedUser = document.getElementById("selectedUser").value;
+        const errorMessage = document.getElementById("error-message");
+
+        // Μετατρέπουμε τα registration_numbers σε JavaScript array
+        const registrationNumbers = <?php echo json_encode($registrationNumbers); ?>;
+
+        if (!registrationNumbers.includes(selectedUser)) {
+            // Αν δεν υπάρχει το ID, εμφανίζουμε το μήνυμα λάθους
+            errorMessage.classList.remove('d-none');
+        } else {
+            // Αν υπάρχει, κρύβουμε το μήνυμα και προχωράμε στην ανακατεύθυνση
+            errorMessage.classList.add('d-none');
+            window.location.href = "form_appointment.php?registration_number=" + selectedUser;
+        }
+    }
+</script>
  
 
+
+
 <!-- Vendor JS Files -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <script src="../../assets/vendor/php-email-form/validate.js"></script>
 <script src="../../assets/vendor/aos/aos.js"></script>

@@ -1,40 +1,88 @@
 <?php
 include "config/config.php";  // Σύνδεση με τη βάση δεδομένων
+$role = $_SESSION['user']['role_id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userId = $_SESSION['user']['user_id']; // Απόκτησε το user_id από το session
+    $userId = $_SESSION['user']['user_id']; // Από session
     $name = $_POST['name'];
     $surname = $_POST['surname'];
-    $email = $_POST['email'];
+    $email = $_SESSION['user']['email'];
     $dateOfBirth = $_POST['dateOfBirth'];
     $phone = $_POST['phone'];
     $city = $_POST['city'];
-    
 
-// Ελέγχουμε αν η ημερομηνία είναι έγκυρη
-if (DateTime::createFromFormat('Y-m-d', $dateOfBirth) === false) {
-    echo json_encode(['status' => 'error', 'message' => 'Μη έγκυρη ημερομηνία.']);
-    exit();
-}
+    // Έλεγχος εγκυρότητας ημερομηνίας
+    if (DateTime::createFromFormat('Y-m-d', $dateOfBirth) === false) {
+        echo json_encode(['success' => false, 'message' => 'Μη έγκυρη ημερομηνία.']);
+        exit();
+    }
 
-    // Ενημέρωση των δεδομένων του χρήστη στη βάση δεδομένων
+    // Ενημέρωση βασικών στοιχείων
     $sql = "UPDATE users SET name = ?, surname = ?, phone = ?, date_of_birth = ?, nationality = ? WHERE user_id = ?";
-$stmt = $conn->prepare($sql);
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        die('Error in SQL preparations: ' . $conn->error);
+    }
+    $stmt->bind_param("ssissi", $name, $surname, $phone, $dateOfBirth, $city, $userId);
 
-if ($stmt === false) {
-    die('Error in SQL preparation: ' . $conn->error);
-}
+    // Αν είναι γιατρός
+    if ($role == "3") {
+        $specialization = $_POST['specialization'];
+        $information = $_POST['info'];
+        $photo = $_FILES['image'];  // Νέα εικόνα αν υπάρχει
 
-$stmt->bind_param("ssissi", $name, $surname, $phone, $dateOfBirth, $city, $userId);
+        // 🔍 Πρώτα φέρνουμε την τρέχουσα φωτογραφία από τη βάση (default_image)
+        $sqlDefaultImage = "SELECT photo FROM doctors_info WHERE doctor_id = ?";
+        $stmtDefault = $conn->prepare($sqlDefaultImage);
+        $stmtDefault->bind_param("i", $userId);
+        $stmtDefault->execute();
+        $resultDefault = $stmtDefault->get_result();
+        $defaultImage = "";
+        if ($row = $resultDefault->fetch_assoc()) {
+            $defaultImage = $row['photo'];
+        }
 
-//enimerono kai ta session mou gia na mporo na ta vlepo tis allages tin idia ora kai sta sessions mou
-$_SESSION['user']['name'] = $name;
-$_SESSION['user']['surname'] = $surname;
-$_SESSION['user']['phone'] = $phone;
-$_SESSION['user']['dateOfBirth'] = $dateOfBirth;
-$_SESSION['user']['nationality'] = $city;
+        // 💡 Ανέβασμα νέας φωτογραφίας ή χρήση της υπάρχουσας
+        $photoName = $defaultImage;  // Χρησιμοποιείται ως default αν δεν ανέβει νέα
 
+        if (!empty($photo['name'])) {
+            $targetDir = "assets/img/doctors/";
+            $newPhotoName = basename($photo['name']);
+            $targetFilePath = $targetDir . $newPhotoName;
+            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
 
+            // Έλεγχος επέκτασης
+            if (in_array($fileType, ['jpg', 'jpeg', 'png'])) {
+                if (move_uploaded_file($photo['tmp_name'], $targetFilePath)) {
+                    $photoName = $newPhotoName;
+                } else {
+                    header("Location: {$_SERVER['PHP_SELF']}?status=error&message=Σφάλμα κατά την αποθήκευση της νέας φωτογραφίας.");
+                    exit();
+                }
+            } else {
+                header("Location: {$_SERVER['PHP_SELF']}?status=error&message=Μη αποδεκτός τύπος αρχείου.");
+                exit();
+            }
+        }
+
+        // Ενημέρωση doctors_info
+        $sql2 = "UPDATE doctors_info SET photo = ?, specialization = ?, information = ? WHERE doctor_id = ?";
+        $stmt2 = $conn->prepare($sql2);
+        if ($stmt2 === false) {
+            die('Σφάλμα SQL: ' . $conn->error);
+        }
+        $stmt2->bind_param("sssi", $photoName, $specialization, $information, $userId);
+        $stmt2->execute();
+    }
+
+    // Ενημέρωση session
+    $_SESSION['user']['name'] = $name;
+    $_SESSION['user']['surname'] = $surname;
+    $_SESSION['user']['phone'] = $phone;
+    $_SESSION['user']['dateOfBirth'] = $dateOfBirth;
+    $_SESSION['user']['nationality'] = $city;
+
+    // Εκτέλεση βασικού update
     if ($stmt->execute()) {
         header("Location: {$_SERVER['PHP_SELF']}?status=success&message=Τα δεδομένα ενημερώθηκαν επιτυχώς.");
         exit();
@@ -42,9 +90,13 @@ $_SESSION['user']['nationality'] = $city;
         header("Location: {$_SERVER['PHP_SELF']}?status=error&message=Αποτυχία ενημέρωσης δεδομένων.");
         exit();
     }
-    $stmt->close();
 }
 ?>
+
+
+
+
+
 <style>
     .profile-info{
         font-size: 18px !important; /* Ή άλλο μέγεθος που προτιμάς */
@@ -93,6 +145,9 @@ $_SESSION['user']['nationality'] = $city;
     .header {
         padding:0px;
     }
+    #userImage {
+        padding:0px;
+    }
 </style>
 <!DOCTYPE html>
 <html lang="el">
@@ -132,9 +187,11 @@ $_SESSION['user']['nationality'] = $city;
               // Ανακτάμε το user_id από το session
         
             // Ερώτημα για να πάρεις τα υπόλοιπα στοιχεία του χρήστη από τη βάση δεδομένων
-            $sql = "SELECT name, surname, date_of_birth, nationality, phone, email, registration_number
-                    FROM users
-                    WHERE user_id = ?";
+            $sql = "SELECT u.name, u.role_id, u.surname, u.date_of_birth, u.nationality, u.phone, u.email, u.registration_number, 
+                di.photo, di.information, di.specialization 
+        FROM users u
+        LEFT JOIN doctors_info di ON u.user_id = di.doctor_id
+        WHERE u.user_id = ?";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("i", $userId);  // Δέσμευση παραμέτρου (user_id)
             $stmt->execute();
@@ -144,9 +201,14 @@ $_SESSION['user']['nationality'] = $city;
             if ($row = $result->fetch_assoc()) {
                 $firstName = $row['name'];
                 $lastName = $row['surname'];
+                $userType = $row['role_id'];
                 $dateOfBirth = $row['date_of_birth'];
                 $nationality = $row['nationality'];
                 $phoneNumber = $row['phone'];
+                $info = $row['information'];
+                $specialization = $row['specialization'];
+                $image = $row['photo'];
+                
                 if ($phoneNumber == 0) {
                     $phoneNumber = '-';
                 }
@@ -157,18 +219,32 @@ $_SESSION['user']['nationality'] = $city;
     ?>
         
 
-<div class="profile-container">
-    <h1>Προφίλ Χρήστη</h1>
-    <div class="profile-info">
-        <p><span class="icon"><i class="bi bi-person"></i></span><strong> Όνομα: </strong> <?php echo " " . htmlspecialchars($firstName); ?></p>
-        <p><span class="icon"><i class="bi bi-people"></i></span><strong> Επώνυμο: </strong> <?php echo " " . htmlspecialchars($lastName); ?></p>
-        <p><span class="icon"><i class="bi bi-calendar"></i></span><strong> Ημερομηνία Γέννησης: </strong> <?php echo " " . htmlspecialchars($dateOfBirth); ?></p>
-        <p><span class="icon"><i class="bi bi-geo-alt"></i></span><strong> Πόλη-Επαρχεία: </strong> <?php echo " " . htmlspecialchars($nationality); ?></p>
-        <p><span class="icon"><i class="bi bi-telephone"></i></span><strong> Κινητό: </strong> <?php echo " " . htmlspecialchars($phoneNumber); ?></p>
-        <p><span class="icon"><i class="bi bi-envelope"></i></span><strong> Email: </strong> <?php echo " " . htmlspecialchars($email); ?></p>
-        <p><span class="icon"><i class="bi bi-credit-card"></i></span><strong> Αριθμός Μητρώου: </strong> <?php echo " " . htmlspecialchars($idNumber); ?></p>
-    </div>
-    <button id="openModal" class="modal-button" style="border-radius: 20px; text-align:end;" data-toggle="modal" data-target="#exampleModal">Άνοιγμα Επιλογών</button>
+        <div class="profile-container">
+        <h1>Προφίλ Χρήστη</h1>
+<div class="profile-info">
+    <p><span class="icon"><i class="bi bi-person"></i></span><strong> Όνομα: </strong> <?php echo " " . htmlspecialchars($firstName); ?></p>
+    <p><span class="icon"><i class="bi bi-people"></i></span><strong> Επώνυμο: </strong> <?php echo " " . htmlspecialchars($lastName); ?></p>
+    <p><span class="icon"><i class="bi bi-calendar"></i></span><strong> Ημερομηνία Γέννησης: </strong> <?php echo " " . htmlspecialchars($dateOfBirth); ?></p>
+    <p><span class="icon"><i class="bi bi-geo-alt"></i></span><strong> Πόλη-Επαρχεία: </strong> <?php echo " " . htmlspecialchars($nationality); ?></p>
+    <p><span class="icon"><i class="bi bi-telephone"></i></span><strong> Κινητό: </strong> <?php echo " " . htmlspecialchars($phoneNumber); ?></p>
+    <p><span class="icon"><i class="bi bi-envelope"></i></span><strong> Email: </strong> <?php echo " " . htmlspecialchars($email); ?></p>
+    <p><span class="icon"><i class="bi bi-credit-card"></i></span><strong> Αριθμός Μητρώου: </strong> <?php echo " " . htmlspecialchars($idNumber); ?></p>
+
+    <!-- Εμφάνιση επιπλέον πεδίων μόνο για γιατρούς -->
+    <?php if ($userType == 3) { ?>
+        
+        <p><span class="icon"><i class="bi bi-journal-bookmark"></i></span><strong> Ειδικότητα: </strong> <?php echo " " . htmlspecialchars($specialization); ?></p>
+
+        <!-- Προβολή φωτογραφίας, αν υπάρχει -->
+        <?php if ($image) { ?>
+            <p><span class="icon"><i class="bi bi-image"></i></span><strong> Φωτογραφία: </strong></p>
+            <img src="assets/img/doctors/<?php echo htmlspecialchars($image); ?>" alt="Φωτογραφία Γιατρού" style="width: 150px; height: auto; border-radius: 10px; margin-bottom: 20px;"/>
+        <?php } ?>
+        <p><span class="icon"><i class="bi bi-info-circle"></i></span><strong> Πληροφορίες: </strong> <?php echo " " . htmlspecialchars($info); ?></p>
+
+    <?php } ?>
+</div>
+<button id="openModal" class="modal-button" style="border-radius: 20px; text-align:end;" data-toggle="modal" data-target="#exampleModal">Άνοιγμα Επιλογών</button>
 </div>
 
 
@@ -186,7 +262,7 @@ $_SESSION['user']['nationality'] = $city;
 
             <!-- Body Modal -->
             <div class="modal-body">
-                <form id="updateUserForm" onsubmit="updateUser(event)" method="POST">
+                <form id="updateUserForm" onsubmit="updateUser(event)" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="name">Όνομα</label>
                         <input type="text" id="userName" name="name" class="form-control" value="<?php echo htmlspecialchars($firstName); ?>">
@@ -211,6 +287,24 @@ $_SESSION['user']['nationality'] = $city;
                         <label for="userAddress">Πόλη-Επαρχεία</label>
                         <input type="text" id="userAddress" name="city" class="form-control" value="<?php echo htmlspecialchars($nationality); ?>">
                     </div>
+
+                    <!-- Εμφάνιση επιπλέον πεδίων μόνο για γιατρούς -->
+                    <?php if ($userType == 3) { ?>
+                        <div class="form-group">
+                            <label for="userInfo">Πληροφορίες</label>
+                            <textarea id="userInfo" name="info" class="form-control"><?php echo htmlspecialchars($info); ?></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="userSpecialization">Ειδικότητα</label>
+                            <input type="text" id="userSpecialization" name="specialization" class="form-control" value="<?php echo htmlspecialchars($specialization); ?>">
+                        </div>
+                        <div class="form-group">
+    <label for="userImage">Φωτογραφία</label>
+    <input type="file" value="dwa" id="userImage" name="image" class="form-control" />
+
+    
+</div>
+                    <?php } ?>
                 </form>
             </div>
 

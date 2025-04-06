@@ -179,15 +179,29 @@ switch ($action) {
               </div>
             </div><!-- End Icon Box -->
             
-              <div class="col-xl-4 d-flex align-items-stretch">
-              <a href="questionnaire.php" >
-                <div class="icon-box" data-aos="zoom-out" data-aos-delay="400">
-                  <i class="bi bi-gem"></i>
-                  <h4>Εργαλεία αυτοαξιολόγησης</h4>
-                  <p>Δοκιμάστε το διαδραστικό μας τεστ και δείτε αν τα συμπτώματά σας συνδέονται με τη διαταραχή.</p>
-                </div>
-                </a>
-              </div><!-- End Icon Box -->
+            <?php
+// Έλεγχος αν ο χρήστης είναι συνδεδεμένος
+
+$isLoggedIn = isset($_SESSION['user']['user_id']); // Υποθέτουμε ότι 'user_id' είναι η μεταβλητή της συνεδρίας για τον συνδεδεμένο χρήστη
+?>
+
+<div class="col-xl-4 d-flex align-items-stretch">
+    <?php if ($isLoggedIn): // Αν είναι συνδεδεμένος, επιτρέπουμε την πρόσβαση στο questionnaire ?>
+        <a href="questionnaire.php">
+            <div class="icon-box" data-aos="zoom-out" data-aos-delay="400">
+                <i class="bi bi-gem"></i>
+                <h4>Εργαλεία αυτοαξιολόγησης</h4>
+                <p>Δοκιμάστε το διαδραστικό μας τεστ και δείτε αν τα συμπτώματά σας συνδέονται με τη διαταραχή.</p>
+            </div>
+        </a>
+    <?php else: ?>
+        <div class="icon-box" data-aos="zoom-out" data-aos-delay="400" style="background-color: #f8f9fa;">
+            <i class="bi bi-gem"></i>
+            <h4>Εργαλεία αυτοαξιολόγησης</h4>
+            <p>Για να δοκιμάσετε το διαδραστικό μας τεστ, παρακαλώ συνδεθείτε πρώτα.</p>
+        </div>
+    <?php endif; ?>
+</div>
             
 
             <div class="col-xl-4 d-flex align-items-stretch">
@@ -723,13 +737,15 @@ switch ($action) {
 						<?php 
 						
 // SQL query με LEFT JOIN για να εμφανίζονται όλα τα events και αν υπάρχει συμμετοχή να επιστρέφεται
-$sql = "SELECT e.id, e.organiser, e.description, e.date, e.time, e.submit,
+$sql = "SELECT e.id, e.user_id, e.description, e.date, e.time, e.submit, e.title,
+               u.name, u.surname,  -- Επιλογή δεδομένων από τον πίνακα users
                CASE 
                    WHEN p.email_user IS NOT NULL THEN 1 
                    ELSE 0 
                END AS is_participating
         FROM events e
         LEFT JOIN participants p ON e.id = p.id_event AND p.email_user = ?
+        LEFT JOIN users u ON e.user_id = u.user_id  -- Σύνδεση με τον πίνακα users
         WHERE e.date >= CURDATE() AND e.submit = 1
         ORDER BY e.date ASC";
 
@@ -752,7 +768,7 @@ if ($result->num_rows > 0) {
 		            <div class="d-flex">
 		              <img src="assets/img/default_image.png" class="testimonial-img flex-shrink-0" alt="Οργανωτής Εικόνα" style="border-radius: 50%; width: 100px; height: 100px; object-fit: cover; margin-right: 20px;">
 		              <div>
-		                <h3>' . htmlspecialchars($row["organiser"]) . '</h3>
+		                <h3>' . htmlspecialchars($row["name"]) . " " . htmlspecialchars($row["surname"]) . '</h3>
 		                <h4>Διοργανωτής/τρια</h4>
                         <div class="stars">
                           <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
@@ -764,6 +780,7 @@ if ($result->num_rows > 0) {
                         </div>
                       </div>
                     </div>
+                    <strong>' . htmlspecialchars($row["title"]) .'</strong>
                     <p>
                       <i class="bi bi-quote quote-icon-left"></i>
                       <span>' . htmlspecialchars($row["description"]) . '</span>

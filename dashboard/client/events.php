@@ -182,16 +182,21 @@ switch ($action) {
       <tbody>
         <?php
         
-                $sql1 = "
-            SELECT e.*, 
-                   CASE 
-                       WHEN p.email_user IS NOT NULL THEN 1
-                       ELSE 0
-                   END AS is_participating
-            FROM events e
-            LEFT JOIN participants p 
-                   ON e.id = p.id_event AND p.email_user = ?
-        ";
+        $sql1 = "
+        SELECT e.*, 
+               u.name AS organizer_name, 
+               u.surname AS organizer_surname,
+               u.email AS organizer_email,
+               CASE 
+                   WHEN p.email_user IS NOT NULL THEN 1
+                   ELSE 0
+               END AS is_participating
+        FROM events e
+        LEFT JOIN users u 
+               ON e.user_id = u.user_id
+        LEFT JOIN participants p 
+               ON e.id = p.id_event AND p.email_user = ?
+    ";
         $stmt = $conn->prepare($sql1);
         
         if ($stmt === false) {
@@ -215,7 +220,7 @@ switch ($action) {
             echo "<td>" . $ctr  . "</td>";
             // Εμφάνιση της ερώτησης
             echo "<td>" . htmlspecialchars($row['title']) . "</td>";
-            echo "<td>" . htmlspecialchars($row['organiser']) . "</td>";
+            echo "<td>" . htmlspecialchars($row['organizer_name']) .  " " . htmlspecialchars($row['organizer_surname']) . "</td>";
             echo "<td>" . htmlspecialchars($row['date']) . "</td>";
             echo "<td>" . htmlspecialchars($row['time']) . "</td>";
             echo "<td>" . htmlspecialchars($row['description']) . "</td>";

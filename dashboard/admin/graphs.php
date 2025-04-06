@@ -56,7 +56,10 @@
     
     //_______________________________pinakas 2________________________________________________
     
+    //______________________________arithmos eggegrammenon atomon ana etos__________________________
+
     
+
 ?>
 
 <!DOCTYPE html>
@@ -121,7 +124,16 @@
           Αποτελέσματα Χρηστών Ανά Έτος 
           <select id="yearFilter" onchange="updateChart()" style="font-size: 22px; height: 40px; line-height: 40px;">
           </select>
-        </h2>            
+        </h2>
+            <p style="text-align: center; font-size: 20px;">
+            Σύνολο χρηστών για το έτος 
+            <span id="selectedYear">
+                <?= !empty($usersByYear) ? array_key_first($usersByYear) : "N/A" ?>
+            </span>: 
+            <strong id="totalUsers">
+                <?= !empty($usersByYear) ? reset($usersByYear) : "0" ?>
+            </strong>
+        </p>
             <canvas id="comparisonChart"></canvas>
         </div>
 </div>
@@ -130,14 +142,26 @@
 <script>
     let myChart; // Διατηρούμε αναφορά στο chart
 
-function fetchChartData(year) {
+    function fetchChartData(year) {
     fetch(`fetch_data.php?year=${year}`)
         .then(response => response.json())
         .then(data => {
+            // Ενημέρωση του αριθμού των εγγεγραμμένων χρηστών
+            document.getElementById('selectedYear').textContent = year;
+
+            // Έλεγχος αν υπάρχουν δεδομένα για το επιλεγμένο έτος
+            let totalUsers = data.users_by_year && data.users_by_year[year] 
+                ? data.users_by_year[year] 
+                : 0;
+
+            document.getElementById('totalUsers').textContent = totalUsers;
+
+            // Ενημέρωση του διαγράμματος
             updateChartData(data.selected_year, data.year_2025);
         })
         .catch(error => console.error("Error fetching data:", error));
 }
+
 
 function updateChartData(data, data2025) {
     if (myChart) {
@@ -231,6 +255,14 @@ new Chart(ctx2, {
         }
     }
 });
+</script>
+<script>
+    function updateChart() {
+        let year = document.getElementById("yearFilter").value;
+        let users = <?= json_encode($usersByYear) ?>;
+        document.getElementById("selectedYear").innerText = year;
+        document.getElementById("totalUsers").innerText = users[year] || 0;
+    }
 </script>
         </div>
     </div>

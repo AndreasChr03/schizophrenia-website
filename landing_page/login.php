@@ -200,7 +200,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- Σύνδεσμος Εγγραφής -->
     <div class="text-center mb-2">
         <p style="font-weight: 600;">Δεν έχω λογαριασμό
-            <a href="register.php" style="text-decoration: none; color: lightblue;">Εγγραφή</a>
+            <a href="role.php" style="text-decoration: none; color: lightblue;">Εγγραφή</a>
         </p>
     </div>
 </form>

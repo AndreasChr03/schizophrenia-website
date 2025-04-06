@@ -1,7 +1,9 @@
 <?php
     include "../../config/config.php";
+    $user_email = $_SESSION['user']['email'];
+    $user_id = $_SESSION['user']['user_id'];
     
-    if ($_SESSION['user']['role_id'] != 1) { 
+    if ($_SESSION['user']['role_id'] != 4) { 
     
         header("Location: ../../index.php");//prepei na einai o admin
         exit();
@@ -100,7 +102,7 @@ switch ($action) {
             
         
             // Εισαγωγή δεδομένων στη βάση
-            $sql = "INSERT INTO events (title, date, time, description, organiser) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO events (title, date, time, description, organiser,creator_id) VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
             
             $email = $_SESSION['user']['email'];
@@ -115,7 +117,7 @@ switch ($action) {
             }
         
             // Δέσμευση των παραμέτρων (μετά από έλεγχο για αποφυγή SQL injection)
-            $stmt->bind_param("sssss", $title, $date, $time, $description, $organiser);
+            $stmt->bind_param("sssssi", $title, $date, $time, $description, $organiser, $user_id);
         
             if ($stmt->execute()) {
                 $successMessage =  "Η εκδήλωση προστέθηκε επιτυχώς!";
@@ -267,7 +269,7 @@ switch ($action) {
 <body>
 <?php
     include "header.php";
-    $user_email = $_SESSION['user']['email']
+    
 ?>
 <?php if (isset($successMessage)): ?>
     <div id="successMessage" class="alert alert-success" role="alert">
@@ -315,7 +317,7 @@ switch ($action) {
            ON e.id = p1.id_event  
     LEFT JOIN participants p2 
            ON e.id = p2.id_event AND p2.email_user = ?  
-    WHERE e.date > CURDATE()
+    WHERE e.date > CURDATE() AND creator_id = ?
     GROUP BY e.id, p2.email_user
 ";
 
@@ -324,7 +326,7 @@ if ($stmt === false) {
     die("Error in preparing the query: " . $conn->error);
 }
 
-$stmt->bind_param('s', $user_email);
+$stmt->bind_param('si', $user_email, $user_id);
 $stmt->execute();
 
 // Ανάκτηση αποτελεσμάτων
@@ -410,30 +412,35 @@ echo "</tr>";
 
             <!-- Body Modal -->
             <div class="modal-body">
-                <form action="events.php?action=add" method="POST">
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Τίτλος:</label>
-                        <input type="text" class="form-control" id="title" name="title" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="date" class="form-label">Ημερομηνία:</label>
-                        <input type="date" class="form-control" id="date" name="date" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="time" class="form-label">Ώρα:</label>
-                        <input type="time" class="form-control" id="time" name="time" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Περιγραφή:</label>
-                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="organiser" class="form-label">Οργανωτής:</label>
-                        <input type="text" class="form-control" id="organiser" name="organiser" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Προσθήκη Εκδήλωσης</button>
-                </form>
-            </div>
+    <form action="events.php?action=add" method="POST">
+        <div class="mb-3">
+            <label for="title" class="form-label">Τίτλος:</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+        <div class="mb-3">
+            <label for="date" class="form-label">Ημερομηνία:</label>
+            <input type="date" class="form-control" id="date" name="date" min="" required>
+        </div>
+        <div class="mb-3">
+            <label for="time" class="form-label">Ώρα:</label>
+            <input type="time" class="form-control" id="time" name="time" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Περιγραφή:</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="organiser" class="form-label">Διοργανωτής:</label>
+            <input type="text" class="form-control" id="organiser" name="organiser" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Προσθήκη Εκδήλωσης</button>
+    </form>
+</div>
+
+<script>
+// Ρυθμίζουμε την ελάχιστη ημερομηνία στη σημερινή
+document.getElementById('date').min = new Date().toISOString().split('T')[0];
+</script>
         </div>
     </div>
 </div>

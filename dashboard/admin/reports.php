@@ -58,7 +58,7 @@
 
     // __________________________________________3 tou pinaka__________________________________________
     
-    $sql3 = "SELECT COUNT(*) AS total_females FROM users WHERE gender = ? && role_id = ?";
+    $sql3 = "SELECT COUNT(*) AS total_females FROM users WHERE gender = ? ";
     $stmt = $conn->prepare($sql3);
 
     // Έλεγχος για λάθη κατά την προετοιμασία του statement
@@ -69,7 +69,7 @@
     // Δέσμευση παραμέτρων και εκτέλεση
     $gender = "female"; 
     $role_id = 2;
-    $stmt->bind_param("si",$gender, $role_id); // "i" σημαίνει integer
+    $stmt->bind_param("s",$gender); // "i" σημαίνει integer
     $stmt->execute();
 
     // Λήψη αποτελεσμάτων
@@ -82,7 +82,7 @@
     
     //______________________________________4 tou pinaka________________________________________
     
-    $sql3 = "SELECT COUNT(*) AS total_men FROM users WHERE gender = ? && role_id = ?";
+    $sql3 = "SELECT COUNT(*) AS total_men FROM users WHERE gender = ?";
     $stmt = $conn->prepare($sql3);
 
     // Έλεγχος για λάθη κατά την προετοιμασία του statement
@@ -93,7 +93,7 @@
     // Δέσμευση παραμέτρων και εκτέλεση
     $gender = "male"; 
     $role_id = 2;
-    $stmt->bind_param("si",$gender, $role_id); // "i" σημαίνει integer
+    $stmt->bind_param("s",$gender, ); // "i" σημαίνει integer
     $stmt->execute();
 
     // Λήψη αποτελεσμάτων

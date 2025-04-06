@@ -189,7 +189,7 @@ if ($banned) {
                             															 echo '<a href="dashboard/doctor/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
                             														}
                             														else{
-                            															 echo '<a href="dashboard/doctor/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
+                            															 echo '<a href="dashboard/volunteer/functions.php" class="dropdown-item menu-action">Ταμπλό Χρήστη</a>';
                             														}
 														
                                                     

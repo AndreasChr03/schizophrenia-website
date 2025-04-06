@@ -1,16 +1,31 @@
 <?php 
     include "../../config/config.php";
-    
+    $email_user = $_SESSION['user']['email'];
     if ($_SESSION['user']['role_id'] != 2) { 
-        header("Location: ../../index.php"); //πρέπει να είναι ο admin
+        header("Location: ../../index.php");
         exit();
     }
-    
+
     if (!isset($_SESSION['user'])) {
         header("Location: ../../index.php"); 
         exit();
     }
+
+    $year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
+
+    $sqlGraph = "SELECT result, COUNT(*) AS count FROM rating WHERE client_email = ? AND YEAR(date) = ? GROUP BY result";
+    $stmtGraph = $conn->prepare($sqlGraph);
     
+    $stmtGraph->bind_param("si", $email_user, $year);
+    $stmtGraph->execute();
+    $result = $stmtGraph->get_result();
+
+    $resultsData = [];
+    $counts = [];
+    while ($row = $result->fetch_assoc()) {
+        $resultsData[] = $row['result'];
+        $counts[] = $row['count'];
+    }
 ?>
 
 <!DOCTYPE html>
@@ -25,32 +40,28 @@
 </head>
 <body>
     <?php include "header.php"; ?>
-    
+
     <div class="content">
         <div class="allTables" style="display: flex;">
-            <!-- Table 1: Αποτελέσματα Ερωτηματολογίου -->
             <div class="container_table" style="flex: 1; margin-right: 20px;">
                 <h2 style="text-align: center; padding-bottom: 40px;">Αποτελέσματα Ερωτηματολογίου</h2>
                 <table id="questionsTable" class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Percentage</th>
+                            <th>Ποσοστό</th>
                             <th>Αποτέλεσμα</th>
+                            <th>Ημερομηνία</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $email_user = $_SESSION['user']['email'];
                         $sql1 = "SELECT * FROM rating WHERE client_email = ?";
                         $stmt = $conn->prepare($sql1);   
                         $stmt->bind_param("s", $email_user);  
                         $stmt->execute();
-                        
-                        // Ανάκτηση αποτελεσμάτων
-                        $result = $stmt->get_result();
-                        $data = ["Possibility of early schizophrenia" => 0, "No Signs of Schizophrenia" => 0, "Early schizophrenia" => 0];
 
+                        $result = $stmt->get_result();
                         if ($result->num_rows > 0) {
                             $ctr = 0;
                             while ($row = $result->fetch_assoc()) {
@@ -59,62 +70,52 @@
                                 echo "<td>" . $ctr  . "</td>";
                                 echo "<td>" . htmlspecialchars($row['percentage']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['result']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['date']) . "</td>";
                                 echo "</tr>";
-
-                                // Μετράμε τις κατηγορίες για το Pie Chart
-                                if (isset($data[$row['result']])) {
-                                    $data[$row['result']]++;
-                                }
                             }
                         } else {
-                            echo "<tr><td colspan='3'>Δεν βρέθηκαν κάποια αποτελέσματα.</td></tr>";
+                            echo "<tr><td colspan='4'>Δεν βρέθηκαν κάποια αποτελέσματα.</td></tr>";
                         }
                         $stmt->close();
                         ?>
                     </tbody>
                 </table>
             </div>
-            
-            <!-- Table 2: Γραφική Παρουσίαση Αποτελεσμάτων -->
-            <div class="container_table" style="flex: 1; margin-left: 20px;">
-                <h2 style="text-align: center; padding-bottom: 40px;">Γραφική Παρουσίαση Αποτελεσμάτων</h2>
-                <canvas id="resultsChart"></canvas>
-                <script>
-                    var ctx = document.getElementById('resultsChart').getContext('2d');
-                    var resultsChart = new Chart(ctx, {
-                        type: 'pie',
-                        data: {
-                            labels: ['Possibility of early schizophrenia', 'No Signs of Schizophrenia', 'Early schizophrenia'],
-                            datasets: [{
-                                label: 'Αποτελέσματα Ερωτηματολογίου',
-                                data: [<?php echo $data['Possibility of early schizophrenia']; ?>, <?php echo $data['No Signs of Schizophrenia']; ?>, <?php echo $data['Early schizophrenia']; ?>],
-                                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-                                hoverOffset: 4
-                            }]
-                        }
-                    });
-                </script>
-            </div>
-        </div>
-    </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+            <div class="container_table" style="flex: 1; margin-left: 20px;">
+    <h2 style="text-align: center; padding-bottom: 40px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+        Αποτελέσματα Ερωτηματολογίου
+        <form method="GET" style="margin: 0;">
+            <select name="year" onchange="this.form.submit()" style="padding: 0px 10px; font-size: 18px; text-align: center;">
+                <?php 
+                for ($i = date('Y'); $i >= date('Y') - 10; $i--) {
+                    $selected = ($i == $year) ? 'selected' : '';
+                    echo "<option value='" . $i . "' " . $selected . ">" . $i . "</option>";
+                }
+                ?>
+            </select>
+        </form>
+    </h2>
+    <canvas id="resultsChart"></canvas>
+</div>
+
 
 <script>
-    $(document).ready(function() {
-        $('#questionsTable').DataTable({
-            "paging": true,
-            "pageLength": 5,
-            "lengthMenu": [5, 10, 25, 50, 100],
-            "language": {
-                "sSearch": "Αναζήτηση:",
-                "lengthMenu": "Εμφάνιση _MENU_ ερωτήσεων ανά σελίδα",
-                "info": "Εμφανίζονται _START_ έως _END_ από _TOTAL_ ερωτήσεις"
-            }
-        });
+    var ctx = document.getElementById('resultsChart').getContext('2d');
+    var labels = <?php echo json_encode($resultsData); ?>;
+    var data = <?php echo json_encode($counts); ?>;
+
+    var resultsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Αποτελέσματα Ερωτηματολογίου',
+                data: data,
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+                hoverOffset: 4
+            }]
+        }
     });
 </script>
 
