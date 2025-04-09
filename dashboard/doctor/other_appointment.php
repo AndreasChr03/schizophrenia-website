@@ -6,6 +6,7 @@ if (isset($_SESSION['user'])) {
     	$userName = $user['name'];
         $user_id = $_GET['registration_number'];
         $user_role = $user['role_id'];
+        
     
     
     
@@ -54,7 +55,15 @@ if (isset($_GET['registration_number']) && isset($_GET['date'])) {
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <link rel="icon" href="../../assets/img/favicon_32x32.png" sizes="32x32" type="image/png">
 
-  
+  <!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+<!-- jQuery (απαραίτητο για DataTables) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
 
   
 </head>
@@ -106,108 +115,107 @@ input.form-control {
     <h1 class="text-center mb-4">Φόρμα Αξιολόγησης Ψυχιάτρου<?php $user_id?></h1>
     <form action="form_appointment.php" method="POST" class="needs-validation" novalidate>
 
-        <!-- Appointment and User Details -->
-        <div class="row g-4 mb-4">
-            <!-- Appointment Details -->
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="card-title mb-0">Πληροφορίες Ραντεβού</h4>
+    <!-- Appointment and User Details -->
+    <div class="row g-4 mb-4">
+        <!-- Appointment Details -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">Πληροφορίες Ραντεβού</h4>
+                </div>
+
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="appointmentDate" class="form-label">Ημερομηνία Ραντεβού</label>
+                        <input type="date" class="form-control" id="appointmentDate" name="appointmentDate" value=<?php echo $date?> required>
+                        <div class="invalid-feedback">Παρακαλώ εισάγετε ημερομηνία ραντεβού.</div>
                     </div>
-                    <div class="card-body">
-                        <div class="card-body">
-                                        <div class="mb-3">
-                                            <label for="appointmentDate" class="form-label">Ημερομηνία Ραντεβού</label>
-                                            <input type="date" class="form-control" id="appointmentDate" name="appointmentDate" required>
-                                            <div class="invalid-feedback">Παρακαλώ εισάγετε ημερομηνία ραντεβού.</div>
-                                        </div>
-                                        <table id="questionsTable" class="table table-bordered table-striped">
-                      <thead>
-                        <tr>
-                          <th>Ημερομηνία</th>
-                          <th>Προβολή</th>
-                
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <?php
-                        
-                        $sql1 = "
-                    SELECT 
-                        u.registration_number,
-                        u.email,
-                        a.clientEmail,
-                        a.appointmentDate
-                        
-                        
-                    FROM 
-                        users u
-                    JOIN 
-                        appointment_details a
-                    ON 
-                        u.email = a.clientEmail
-                        WHERE u.email = ?
-                    ORDER BY 
-                        a.appointmentDate DESC;
-                ";
-                
-                $stmt = $conn->prepare($sql1);
-                if ($stmt === false) {
-                    die("Error in preparing the query: " . $conn->error);
-                }
-                
-                $stmt->bind_param('s', $email);
-                $stmt->execute();
-                
-                // Ανάκτηση αποτελεσμάτων
-                $result = $stmt->get_result();
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        
-                        echo "<td>" . htmlspecialchars($row['appointmentDate']) . "</td>";
-                    
-                    // Προσθήκη κουμπιού για modal ενημέρωσης
-                    echo "<td>
-                        <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#viewModal' 
-                            data-id='" . htmlspecialchars($row['registration_number']) . "'  
-                            data-date='" . htmlspecialchars($row['appointmentDate']) . "'>
-                            <i class='bi bi-eye'></i> Προβολή
-                        </button>
-                      </td>";
-                
-                echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='4'>Δεν βρέθηκαν τα προηγούμενα ραντεβού.</td></tr>";
-                    }
-                
-                    $stmt->close();
-                    ?>
-                      </tbody>
+
+                    <table id="questionsTable" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Ημερομηνία</th>
+                                <th>Προβολή</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $sql1 = "
+                                SELECT 
+                                    u.registration_number,
+                                    u.email,
+                                    a.clientEmail,
+                                    a.appointmentDate
+                                FROM 
+                                    users u
+                                JOIN 
+                                    appointment_details a
+                                ON 
+                                    u.email = a.clientEmail
+                                WHERE u.email = ?
+                                ORDER BY a.appointmentDate DESC;
+                            ";
+
+                            $stmt = $conn->prepare($sql1);
+                            if ($stmt === false) {
+                                die("Error in preparing the query: " . $conn->error);
+                            }
+
+                            $stmt->bind_param('s', $email);
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($row['appointmentDate']) . "</td>";
+                                    echo "<td>
+                                        <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#viewModal' 
+                                            data-id='" . htmlspecialchars($row['registration_number']) . "'  
+                                            data-date='" . htmlspecialchars($row['appointmentDate']) . "'>
+                                            <i class='bi bi-eye'></i> Προβολή
+                                        </button>
+                                    </td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='2'>Δεν βρέθηκαν τα προηγούμενα ραντεβού.</td></tr>";
+                            }
+
+                            $stmt->close();
+                            ?>
+                        </tbody>
                     </table>
-                    </div>
-                    </div> 
                 </div>
             </div>
-            
-            <script>
-    // Φόρτωση στοιχείων στο modal κατά το άνοιγμα
-    const viewModal = document.getElementById('viewModal');
-    viewModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const userId = button.getAttribute('data-id');
-        const date = button.getAttribute('data-date');
+        </div>
+    
 
-        // Ενημέρωση του κειμένου στο modal
-        document.getElementById('modalDate').textContent = date;
+</form>
 
-        // Ρύθμιση του κουμπιού επιβεβαίωσης με τα σωστά URL params
-        const confirmButton = document.getElementById('confirmViewButton');
-        confirmButton.href = `other_appointment.php?registration_number=${userId}&date=${date}`;
+<!-- DataTable Script -->
+<script>
+    $(document).ready(function () {
+        $('#questionsTable').DataTable({
+            pageLength: 5,
+            lengthMenu: [[5, 10, 25, 50], [5, 10, 25, 50]],
+            language: {
+                "lengthMenu": "Εμφάνιση _MENU_ εγγραφών ανά σελίδα",
+                "zeroRecords": "Δεν βρέθηκαν εγγραφές",
+                "info": "Εμφάνιση _START_ έως _END_ από _TOTAL_ εγγραφές",
+                "infoEmpty": "Δεν υπάρχουν διαθέσιμες εγγραφές",
+                "infoFiltered": "(Φιλτραρισμένο από _MAX_ συνολικές εγγραφές)",
+                "search": "Αναζήτηση:",
+                "paginate": {
+                    "first": "Πρώτη",
+                    "last": "Τελευταία",
+                    "next": "Επόμενη",
+                    "previous": "Προηγούμενη"
+                }
+            }
+        });
     });
 </script>
-
             <!-- User Details -->
             <div class="col-md-6">
                 <div class="card h-100">

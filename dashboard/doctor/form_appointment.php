@@ -98,7 +98,16 @@ $conn->close();
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <link rel="icon" href="../../assets/img/favicon_32x32.png" sizes="32x32" type="image/png">
 
-  
+  <!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+
+<!-- jQuery (πρέπει να φορτωθεί πριν το DataTables) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
 
   <!-- =======================================================
   * Template Name: Medilab
@@ -308,6 +317,29 @@ input.form-control {
                     document.getElementById("appointmentDate").value = today;  // Ρύθμιση της αυριανής ημερομηνίας στο input
                 };
             </script>
+            
+            <script>
+    $(document).ready(function () {
+        $('#questionsTable').DataTable({
+            pageLength: 5,
+            lengthMenu: [[5, 10, 25, 50], [5, 10, 25, 50]],
+            language: {
+                "lengthMenu": "Εμφάνιση _MENU_ εγγραφών ανά σελίδα",
+                "zeroRecords": "Δεν βρέθηκαν εγγραφές",
+                "info": "Εμφάνιση _START_ έως _END_ από _TOTAL_ εγγραφές",
+                "infoEmpty": "Δεν υπάρχουν διαθέσιμες εγγραφές",
+                "infoFiltered": "(Φιλτραρισμένο από _MAX_ συνολικές εγγραφές)",
+                "search": "Αναζήτηση:",
+                "paginate": {
+                    "first": "Πρώτη",
+                    "last": "Τελευταία",
+                    "next": "Επόμενη",
+                    "previous": "Προηγούμενη"
+                },
+            }
+        });
+    });
+</script>   
 
             <!-- User Details -->
             <div class="col-md-6">

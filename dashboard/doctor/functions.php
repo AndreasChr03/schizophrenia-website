@@ -255,11 +255,11 @@ while ($row = $result->fetch_assoc()) {
             <!-- Body Modal -->
             <div class="modal-body">
                 <div id="error-message" class="alert alert-danger d-none" role="alert">
-                    Το Registration Number δεν υπάρχει στο σύστημα!
+                    Ο αριθμός μητρώου δεν υπάρχει στο σύστημα!
                 </div>
                 <form id="userForm">
                     <div class="form-group">
-                        <label for="selectedUser">Επιλέξτε Registration Number</label>
+                        <label for="selectedUser">Επιλέξτε αριθμός μητρώου</label>
                         <input list="registrationNumbers" id="selectedUser" name="selectedUser" class="form-control" placeholder="Επιλέξτε ή γράψτε">
                         <datalist id="registrationNumbers">
                             <?php foreach ($registrationNumbers as $regNum): ?>
@@ -284,25 +284,19 @@ while ($row = $result->fetch_assoc()) {
 
 <script>
     function submitUser(event) {
-        // Ελέγχουμε αν το event υπάρχει πριν το χρησιμοποιήσουμε
-        if (event) {
-            event.preventDefault();
-        }
+        if (event) event.preventDefault();
 
-        // Παίρνουμε το επιλεγμένο registration number
-        const selectedUser = document.getElementById("selectedUser").value;
+        const selectedUser = document.getElementById("selectedUser").value.trim();
         const errorMessage = document.getElementById("error-message");
 
-        // Μετατρέπουμε τα registration_numbers σε JavaScript array
-        const registrationNumbers = <?php echo json_encode($registrationNumbers); ?>;
+        const registrationNumbers = <?php echo json_encode(array_map('strval', $registrationNumbers)); ?>;
+        console.log("Available registration numbers:", registrationNumbers);
 
         if (!registrationNumbers.includes(selectedUser)) {
-            // Αν δεν υπάρχει το ID, εμφανίζουμε το μήνυμα λάθους
             errorMessage.classList.remove('d-none');
         } else {
-            // Αν υπάρχει, κρύβουμε το μήνυμα και προχωράμε στην ανακατεύθυνση
             errorMessage.classList.add('d-none');
-            window.location.href = "form_appointment.php?registration_number=" + selectedUser;
+            window.location.href = "form_appointment.php?registration_number=" + encodeURIComponent(selectedUser);
         }
     }
 </script>

@@ -275,58 +275,178 @@ $isLoggedIn = isset($_SESSION['user']['user_id']); // Υποθέτουμε ότ�
 
 <!-- Section Title -->
 <div class="container section-title" data-aos="fade-up">
-<h2>Οι Γιατροί μας</h2>
-<p>Αυτοί είναι οι γιατροί που είναι εγγεγραμμένοι στην υπηρεσία μας και μπορείτε να επικοινωνήσετε μαζί τους για περισσότερες πληροφορίες.</p>
+    <h2>Οι Γιατροί μας</h2>
+    <p>Αυτοί είναι οι γιατροί που είναι εγγεγραμμένοι στην υπηρεσία μας και μπορείτε να επικοινωνήσετε μαζί τους για περισσότερες πληροφορίες.</p>
 </div><!-- End Section Title -->
 
 <div class="container">
 
-  <div class="row gy-4">
-      <?php
-      $sql4 = "SELECT 
-      users.name, 
-      users.surname, 
-      users.email, 
-      users.user_id, 
-      doctors_info.doctor_id, 
-      doctors_info.specialization, 
-      doctors_info.information, 
-      doctors_info.photo 
-      FROM users
-      JOIN doctors_info 
-      ON users.user_id = doctors_info.doctor_id
-      WHERE users.role_id = 3";
-      
-      $result4 = $conn->query($sql4);
-      
-      // Έλεγχος αν υπάρχουν αποτελέσματα
-      if ($result4->num_rows > 0) {
-      // Εμφάνιση των αποτελεσμάτων
-      while($row4 = $result4->fetch_assoc()) {
-          echo '<div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">';
-          echo '<div class="team-member d-flex align-items-start">';
-          echo '<div class="pic"><img src="assets/img/doctors/' . $row4["photo"] . '" class="img-fluid" alt=""></div>';
-          echo '<div class="member-info">';
-          echo '<h4>' . $row4["name"] . ' ' . $row4["surname"] . '</h4>';
-          echo '<span>' . $row4["specialization"] . '</span>';
-          echo '<p>' . $row4["information"] . '</p>';
-          echo '<div class="social">';
-          echo '<a href="mailto:'. $row4['email'] .'"><i class="bi bi-envelope"></i></a>';
-          echo '</div>';
-          echo '</div>';
-          echo '</div>';
-          echo '</div>';
+    <!-- Search Box -->
+    <div class="row mb-4 ">
+    <div class="col-12 col-md-8">
+        <div class="input-group">
+            <input type="text" id="searchBox" class="form-control" placeholder="Αναζήτηση γιατρού..." onkeyup="searchDoctors()" style="margin-bottom: 0px !important;">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+        </div>
+    </div>
+</div>
+
+<style>
+    #searchBox{
+      padding: 20px 10px;
+    }
+    .input-group {
+        width: 50%;
+    }
+
+    .input-group .form-control {
+        border-radius: 25px 0 0 25px; /* Γωνίες για το input */
+        padding: 10px 15px;
+    }
+
+    .input-group .input-group-text {
+        border-radius: 0 25px 25px 0; /* Γωνίες για το span */
+        background-color: #f1f1f1;
+    }
+
+    .bi-search {
+        color: #007bff;
+    }
+</style>
+
+
+    <div class="row gy-4" id="doctorsList">
+        <?php
+        // Βασική παράμετρος για σελιδοποίηση
+        $doctorsPerPage = 6; 
+        $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+        $offset = ($currentPage - 1) * $doctorsPerPage;
+
+        // SQL Query για την ανάκτηση των γιατρών (με όριο)
+        $sql4 = "SELECT 
+                    users.name, 
+                    users.surname, 
+                    users.email, 
+                    users.user_id, 
+                    users.nationality,
+                    doctors_info.doctor_id, 
+                    doctors_info.specialization, 
+                    doctors_info.information, 
+                    doctors_info.photo 
+                FROM users
+                JOIN doctors_info 
+                ON users.user_id = doctors_info.doctor_id
+                WHERE users.role_id = 3
+                LIMIT $doctorsPerPage OFFSET $offset";
+        
+        $result4 = $conn->query($sql4);
+        
+        // Έλεγχος αν υπάρχουν αποτελέσματα
+        if ($result4->num_rows > 0) {
+            // Εμφάνιση των αποτελεσμάτων
+            while($row4 = $result4->fetch_assoc()) {
+                echo '<div class="col-lg-6 doctor-card" data-aos="fade-up" data-aos-delay="100">';
+                echo '<div class="team-member d-flex align-items-start">';
+                echo '<div class="pic"><img src="assets/img/doctors/' . $row4["photo"] . '" class="img-fluid" alt=""></div>';
+                echo '<div class="member-info">';
+                echo '<h4>' . $row4["name"] . ' ' . $row4["surname"] . '</h4>';
+                echo '<span>' . $row4["specialization"] . '</span>';
+                echo '<p>' .  'Περιοχή Ιατρίου: ' . $row4["nationality"] . '</p>';
+                echo '<p>' .$row4["information"] . '</p>';
+                echo '<div class="social">';
+                echo '<a href="mailto:'. $row4['email'] .'"><i class="bi bi-envelope"></i></a>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+                echo '</div>';
+            }
+        } else {
+            echo "Δεν βρέθηκαν γιατροί.";
+        }
+        ?>
+    </div>
+
+    <!-- Σελιδοποίηση -->
+    <div class="d-flex justify-content-center mt-4">
+        <?php
+        // Υπολογισμός του αριθμού των σελίδων
+        $sqlCount = "SELECT COUNT(*) as total FROM users WHERE role_id = 3";
+        $resultCount = $conn->query($sqlCount);
+        $rowCount = $resultCount->fetch_assoc();
+        $totalDoctors = $rowCount['total'];
+        $totalPages = ceil($totalDoctors / $doctorsPerPage);
+
+        // Προηγούμενη Σελίδα
+        if ($currentPage > 1) {
+          echo '<a href="?page=' . ($currentPage - 1) . '#doctors" class="cta-btn mx-1">Προηγούμενη</a>';
       }
-      } else {
-          echo "Δεν βρέθηκαν γιατροί.";
+      
+      // Εμφάνιση αριθμών σελίδων
+      for ($i = 1; $i <= $totalPages; $i++) {
+          echo '<a href="?page=' . $i . '#doctors" class="cta-btn mx-1">' . $i . '</a>';
+      }
+      
+      // Επόμενη Σελίδα
+      if ($currentPage < $totalPages) {
+          echo '<a href="?page=' . ($currentPage + 1) . '#doctors" class="cta-btn mx-1">Επόμενη</a>';
       }
       ?>
-
-  </div>
+    </div>
 
 </div>
 
-</section><!-- /Doctors Section -->
+</section>
+<style>
+.cta-btn {
+    padding: 5px 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white !important;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect για τα κουμπιά */
+.cta-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Επιπλέον στυλ για τα κουμπιά πλοήγησης (Προηγούμενη, Επόμενη, Αριθμοί Σελίδων) */
+.cta-btn.mx-1 {
+    margin: 5px;
+    cursor: pointer;
+}
+
+
+</style>
+<script>
+// Λειτουργία αναζήτησης γιατρού
+function searchDoctors() {
+    var input, filter, doctorsList, doctorCards, name, i, txtValue;
+    input = document.getElementById('searchBox');
+    filter = input.value.toUpperCase();
+    doctorsList = document.getElementById('doctorsList');
+    doctorCards = doctorsList.getElementsByClassName('doctor-card');
+
+    for (i = 0; i < doctorCards.length; i++) {
+        name = doctorCards[i].getElementsByClassName('member-info')[0];
+        if (name) {
+            txtValue = name.textContent || name.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                doctorCards[i].style.display = "";
+            } else {
+                doctorCards[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
+
+
 
     
     <!-- <section id="services" class="services section">

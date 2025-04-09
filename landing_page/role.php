@@ -59,7 +59,7 @@ $error_message = null;
 <body class="bg-light">
     <div class="container p-5 d-flex flex-column align-items-center">
     <form id="myForm"
-      class="form-control mt-5 p-4 w-100 col-lg-3" 
+      class="form-control mt-5 p-4 w-50 col-lg-3" 
       style="position: relative; z-index: 10; height:auto; width:320px; top:10px;  
       box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px; 
       background-color: rgba(0, 0, 0, 0.7); border-radius: 8px; color: white;">
@@ -78,19 +78,30 @@ $error_message = null;
 
 
     <div class="mb-3">
-        <label for="role" style="font-weight: 500;">Επέλεξε Ρόλο *</label>
-        <select name="role" id="role" class="form-control" required style="background-color: #E8F0FE; color: black;">
-            <option value="">-- Επιλογή Ρόλου --</option>
-            <?php
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo '<option value="' . htmlspecialchars($row['role_name']) . '">' . htmlspecialchars($row['role_name']) . '</option>';
-                }
-            } else {
-                echo '<option disabled>Δεν υπάρχουν διαθέσιμοι ρόλοι</option>';
+    <label for="role" style="font-weight: 500;">Επέλεξε Ρόλο *</label>
+<select name="role" id="role" class="form-control" required style="background-color: #E8F0FE; color: black;">
+    <option value="">-- Επιλογή Ρόλου --</option>
+    <?php
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $role_en = htmlspecialchars($row['role_name']);
+            // Αντιστοίχιση με ελληνικά
+            $role_gr = '';
+            if ($role_en === 'client') {
+                $role_gr = ' - Πελάτης';
+            } elseif ($role_en === 'volunteer') {
+                $role_gr = ' - Εθελοντής';
+            } elseif ($role_en === 'doctor') {
+                $role_gr = ' - Γιατρός';
             }
-            ?>
-        </select>
+
+            echo '<option value="' . $role_en . '">' . $role_en . $role_gr . '</option>';
+        }
+    } else {
+        echo '<option disabled>Δεν υπάρχουν διαθέσιμοι ρόλοι</option>';
+    }
+    ?>
+</select>
         <div id="roleError" class="text-danger" style="display: none; font-size: 13px; margin-top: 5px;">
         Παρακαλώ επίλεξε έναν ρόλο.
     </div>

@@ -357,57 +357,7 @@ form {
             
 
 
-<div id="doctorFields">
-    <div class="row mb-2">
-        <div class="col-6">
-                <label for="name"><i class="fa fa-user"></i> Φωτογραφία Προφίλ* (600x600 .jpg ή .png)*</label>
-                <input type="file" name="profilePicture" id="profilePicture" class="form-control <?php echo (!empty($profile_err)) ? 'is-invalid' : ''; ?>" style="background-color: #E8F0FE; color: black;">
-                <div class="invalid-feedback">
-                
-                    <?php echo $profile_err ?? ''; ?>
-                </div>
-                <div class="valid-feedback">
-                    <i class="fa fa-check-circle" style="color: green;"></i> Έγκυρο ταυτότητα!
-                </div>
-            </div>
-        <div class="col-6">
-            <label for="specialization"><i class="fa fa-user-md"></i> Ειδικότητα*</label>
-            <select name="specialization" id="specialization" class="form-control <?php echo (!empty($specialization_err)) ? 'is-invalid' : ''; ?>" style="background-color: #E8F0FE; color: black;">
-                <option value="">Επιλέξτε ειδικότητα</option>
-                <option value="Κλινικός Ψυχολόγος">Κλινικός Ψυχολόγος</option>
-                <option value="Παιδοψυχολόγος">Παιδοψυχολόγος</option>
-                <option value="Συμβουλευτικός Ψυχολόγος">Συμβουλευτικός Ψυχολόγος</option>
-                <option value="Ψυχολόγος Δικαστικός">Ψυχολόγος Δικαστικός</option>
-                <option value="Νευροψυχολόγος">Νευροψυχολόγος</option>
-                <option value="Σχολικός Ψυχολόγος">Σχολικός Ψυχολόγος</option>
-                <option value="Ψυχολόγος Υγείας">Ψυχολόγος Υγείας</option>
-                <option value="Γηριατρικός Ψυχολόγος">Γηριατρικός Ψυχολόγος</option>
-                <option value="Ψυχολόγος Αποκατάστασης">Ψυχολόγος Αποκατάστασης</option>
-                <option value="Αθλητικός Ψυχολόγος">Αθλητικός Ψυχολόγος</option>
-            </select>
-            <div class="invalid-feedback">
-                Παρακαλώ επιλέξτε μια ειδικότητα.
-                <?php echo $specialization_err ?? ''; ?>
-            </div>
-            <div class="valid-feedback">
-                <i class="fa fa-check-circle" style="color: green;"></i> Έγκυρη επιλογή!
-            </div>
-        </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-12">
-            <label for="information"><i class="fa fa-info-circle"></i> Πληροφορίες* (400 χαρακτήρες max)</label>
-            <textarea name="information" style="background-color: #E8F0FE; color: black;" id="information" class="form-control <?php echo (!empty($information_err)) ? 'is-invalid' : ''; ?>" rows="3"></textarea>
-            <div class="invalid-feedback">
-                Παρακαλώ συμπληρώστε τις πληροφορίες.
-                <?php echo $information_err ?? ''; ?>
-            </div>
-            <div class="valid-feedback">
-                <i class="fa fa-check-circle" style="color: green;"></i> Έγκυρες πληροφορίες!
-            </div>
-        </div>
-    </div>
-</div>
+
 
         
         <div class="row mb-2">
@@ -437,7 +387,7 @@ form {
         
         <div class="row mb-2">
             <div class="col-6">
-                <label for="name"><i class="fa fa-user"></i> Ταυτότητα*</label>
+                <label for="name"><i class="fa fa-user"></i> Ιατρικό Μητρώο*</label>
                 <input type="number" name="registration_number" id="registration_number" class="form-control <?php echo (!empty($registration_num_err)) ? 'is-invalid' : ''; ?>" style="background-color: #E8F0FE; color: black;">
                 <div class="invalid-feedback">
                     Παρακαλώ συμπληρώστε το κενό
@@ -566,6 +516,58 @@ form {
         </div>
         <div class="valid-feedback">
             <i class="fa fa-check-circle" style="color: green;"></i> Ο κωδικός επιβεβαιώθηκε!
+        </div>
+    </div>
+</div>
+
+<div id="doctorFields">
+    <div class="row mb-2">
+        <div class="col-6">
+                <label for="name"><i class="fa fa-user"></i> Φωτογραφία Προφίλ* (600x600 .jpg ή .png)*</label>
+                <input type="file" name="profilePicture" id="profilePicture" class="form-control <?php echo (!empty($profile_err)) ? 'is-invalid' : ''; ?>" style="background-color: #E8F0FE; color: black;">
+                <div class="invalid-feedback">
+                
+                    <?php echo $profile_err ?? ''; ?>
+                </div>
+                <div class="valid-feedback">
+                    <i class="fa fa-check-circle" style="color: green;"></i> Έγκυρο ταυτότητα!
+                </div>
+            </div>
+        <div class="col-6">
+            <label for="specialization"><i class="fa fa-user-md"></i> Ειδικότητα*</label>
+            <select name="specialization" id="specialization" class="form-control <?php echo (!empty($specialization_err)) ? 'is-invalid' : ''; ?>" style="background-color: #E8F0FE; color: black;">
+                <option value="">Επιλέξτε ειδικότητα</option>
+                <option value="Κλινικός Ψυχολόγος">Κλινικός Ψυχολόγος</option>
+                <option value="Παιδοψυχολόγος">Παιδοψυχολόγος</option>
+                <option value="Συμβουλευτικός Ψυχολόγος">Συμβουλευτικός Ψυχολόγος</option>
+                <option value="Ψυχολόγος Δικαστικός">Ψυχολόγος Δικαστικός</option>
+                <option value="Νευροψυχολόγος">Νευροψυχολόγος</option>
+                <option value="Σχολικός Ψυχολόγος">Σχολικός Ψυχολόγος</option>
+                <option value="Ψυχολόγος Υγείας">Ψυχολόγος Υγείας</option>
+                <option value="Γηριατρικός Ψυχολόγος">Γηριατρικός Ψυχολόγος</option>
+                <option value="Ψυχολόγος Αποκατάστασης">Ψυχολόγος Αποκατάστασης</option>
+                <option value="Αθλητικός Ψυχολόγος">Αθλητικός Ψυχολόγος</option>
+            </select>
+            <div class="invalid-feedback">
+                Παρακαλώ επιλέξτε μια ειδικότητα.
+                <?php echo $specialization_err ?? ''; ?>
+            </div>
+            <div class="valid-feedback">
+                <i class="fa fa-check-circle" style="color: green;"></i> Έγκυρη επιλογή!
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-12">
+            <label for="information"><i class="fa fa-info-circle"></i> Πληροφορίες* (400 χαρακτήρες max)</label>
+            <textarea name="information" style="background-color: #E8F0FE; color: black;" id="information" class="form-control <?php echo (!empty($information_err)) ? 'is-invalid' : ''; ?>" rows="3"></textarea>
+            <div class="invalid-feedback">
+                Παρακαλώ συμπληρώστε τις πληροφορίες.
+                <?php echo $information_err ?? ''; ?>
+            </div>
+            <div class="valid-feedback">
+                <i class="fa fa-check-circle" style="color: green;"></i> Έγκυρες πληροφορίες!
+            </div>
         </div>
     </div>
 </div>

@@ -1,8 +1,9 @@
 <?php
     include "../../config/config.php";
-    $user_email = $_SESSION['user']['email'];
+    $name = $_SESSION['user']['name'];
+    $surname = $_SESSION['user']['surname'];
+    $fullName = $name . " " . $surname;
     $user_id = $_SESSION['user']['user_id'];
-    
     if ($_SESSION['user']['role_id'] != 4) { 
     
         header("Location: ../../index.php");//prepei na einai o admin
@@ -18,6 +19,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 switch ($action) {
     case 'delete':
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+
             $id = $_POST['id']; // Λήψη του ID από τη φόρμα
     
             $sql = "DELETE FROM events WHERE id = ?";
@@ -49,17 +51,17 @@ switch ($action) {
         break;
 
     case 'update':
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['title'], $_POST['date'], $_POST['time'], $_POST['description'], $_POST['organiser'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['title'], $_POST['date'], $_POST['time'], $_POST['description'])) {
             // Λήψη δεδομένων από το POST
             $id = $_POST['id']; // Λήψη ID από POST
             $title = $_POST['title']; // Λήψη τίτλου από POST
             $date = $_POST['date']; // Λήψη ημερομηνίας από POST
             $time = $_POST['time']; // Λήψη ώρας από POST
             $description = $_POST['description']; // Λήψη περιγραφής από POST
-            $organiser = $_POST['organiser']; // Λήψη διοργανωτή από POST
+            
         
             // Ενημέρωση της βάσης δεδομένων
-            $sql = "UPDATE events SET title = ?, date = ?, time = ?, description = ?, organiser = ? WHERE id = ?";
+            $sql = "UPDATE events SET title = ?, date = ?, time = ?, description = ?  WHERE id = ?";
             $stmt = $conn->prepare($sql);
             
             $email = $_SESSION['user']['email'];
@@ -74,7 +76,7 @@ switch ($action) {
             }
         
             // Δέσιμο παραμέτρων
-            $stmt->bind_param("sssssi", $title, $date, $time, $description, $organiser, $id);
+            $stmt->bind_param("ssssi", $title, $date, $time, $description, $id);
         
             // Εκτέλεση του ερωτήματος
             if ($stmt->execute()) {
@@ -91,18 +93,18 @@ switch ($action) {
         
         
     case 'add':
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['title'], $_POST['date'], $_POST['time'], $_POST['description'], $_POST['organiser'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['title'], $_POST['date'], $_POST['time'], $_POST['description'])) {
             // Λήψη των δεδομένων από το POST
             $title = $_POST['title']; // Τίτλος από τη φόρμα
             $date = $_POST['date'];   // Ημερομηνία από τη φόρμα
             $time = $_POST['time'];   // Ώρα από τη φόρμα
             $description = $_POST['description']; // Περιγραφή από τη φόρμα
-            $organiser = $_POST['organiser']; // Οργανωτής από τη φόρμα
+            
         
             
         
             // Εισαγωγή δεδομένων στη βάση
-            $sql = "INSERT INTO events (title, date, time, description, organiser,creator_id) VALUES (?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO events (title, date, time, description, user_id) VALUES (?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
             
             $email = $_SESSION['user']['email'];
@@ -117,7 +119,7 @@ switch ($action) {
             }
         
             // Δέσμευση των παραμέτρων (μετά από έλεγχο για αποφυγή SQL injection)
-            $stmt->bind_param("sssssi", $title, $date, $time, $description, $organiser, $user_id);
+            $stmt->bind_param("ssssi", $title, $date, $time, $description, $user_id);
         
             if ($stmt->execute()) {
                 $successMessage =  "Η εκδήλωση προστέθηκε επιτυχώς!";
@@ -255,6 +257,7 @@ switch ($action) {
     padding: 20px;  /* Αυξάνει το padding για μεγαλύτερη απόσταση */
     line-height: 2; /* Αυξάνει το ύψος των γραμμών για πιο ευανάγνωστο κείμενο */
     display: block; /* Επιτρέπει στη στήλη να επεκτείνεται ανάλογα με το περιεχόμενο */
+    
 }
 
 /* Αυξάνει το πλάτος της στήλης περιγραφής */
@@ -269,7 +272,7 @@ switch ($action) {
 <body>
 <?php
     include "header.php";
-    
+    $user_email = $_SESSION['user']['email']
 ?>
 <?php if (isset($successMessage)): ?>
     <div id="successMessage" class="alert alert-success" role="alert">
@@ -300,6 +303,7 @@ switch ($action) {
           <th>Συμμετοχή</th>
           <th>Διαγραφή</th>
           <th>Ενημέρωση</th>
+
         </tr>
       </thead>
       <tbody>
@@ -317,7 +321,7 @@ switch ($action) {
            ON e.id = p1.id_event  
     LEFT JOIN participants p2 
            ON e.id = p2.id_event AND p2.email_user = ?  
-    WHERE e.date > CURDATE() AND creator_id = ?
+    WHERE e.date > CURDATE() AND user_id = ?
     GROUP BY e.id, p2.email_user
 ";
 
@@ -326,7 +330,7 @@ if ($stmt === false) {
     die("Error in preparing the query: " . $conn->error);
 }
 
-$stmt->bind_param('si', $user_email, $user_id);
+$stmt->bind_param('si', $user_email,$user_id);
 $stmt->execute();
 
 // Ανάκτηση αποτελεσμάτων
@@ -341,7 +345,7 @@ if ($result->num_rows > 0) {
         echo "<tr>";
         echo "<td>" . $ctr . "</td>";
         echo "<td>" . htmlspecialchars($row['title']) . "</td>";
-        echo "<td>" . htmlspecialchars($row['organiser']) . "</td>";
+        echo "<td>" . htmlspecialchars($fullName) . "</td>";
         echo "<td>" . htmlspecialchars($row['date']) . "</td>";
         echo "<td>" . htmlspecialchars($row['time']) . "</td>";
         echo "<td>" . htmlspecialchars($row['description']) . "</td>";
@@ -381,7 +385,6 @@ if ($result->num_rows > 0) {
             data-date='" . htmlspecialchars($row['date']) . "' 
             data-time='" . htmlspecialchars($row['time']) . "' 
             data-description='" . htmlspecialchars($row['description']) . "' 
-            data-organiser='" . htmlspecialchars($row['organiser']) . "' 
             data-action='update'>
             <i class='bi bi-pencil'></i> Ενημέρωση
         </button>
@@ -412,35 +415,26 @@ echo "</tr>";
 
             <!-- Body Modal -->
             <div class="modal-body">
-    <form action="events.php?action=add" method="POST">
-        <div class="mb-3">
-            <label for="title" class="form-label">Τίτλος:</label>
-            <input type="text" class="form-control" id="title" name="title" required>
-        </div>
-        <div class="mb-3">
-            <label for="date" class="form-label">Ημερομηνία:</label>
-            <input type="date" class="form-control" id="date" name="date" min="" required>
-        </div>
-        <div class="mb-3">
-            <label for="time" class="form-label">Ώρα:</label>
-            <input type="time" class="form-control" id="time" name="time" required>
-        </div>
-        <div class="mb-3">
-            <label for="description" class="form-label">Περιγραφή:</label>
-            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="organiser" class="form-label">Διοργανωτής:</label>
-            <input type="text" class="form-control" id="organiser" name="organiser" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Προσθήκη Εκδήλωσης</button>
-    </form>
-</div>
-
-<script>
-// Ρυθμίζουμε την ελάχιστη ημερομηνία στη σημερινή
-document.getElementById('date').min = new Date().toISOString().split('T')[0];
-</script>
+                <form action="events.php?action=add" method="POST">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Τίτλος:</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Ημερομηνία:</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="time" class="form-label">Ώρα:</label>
+                        <input type="time" class="form-control" id="time" name="time" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Περιγραφή:</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Προσθήκη Εκδήλωσης</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -486,12 +480,6 @@ document.getElementById('date').min = new Date().toISOString().split('T')[0];
                     <div class="mb-3">
                         <label for="eventDescription" class="form-label">Περιγραφή:</label>
                         <textarea class="form-control" id="eventDescription" name="description" rows="3"></textarea>
-                    </div>
-
-                    <!-- Πεδίο για τον Διοργανωτή -->
-                    <div class="mb-3">
-                        <label for="eventOrganiser" class="form-label">Διοργανωτής:</label>
-                        <input type="text" class="form-control" id="eventOrganiser" name="organiser" required>
                     </div>
 
                     <!-- Κουμπί Αποθήκευσης -->
@@ -668,11 +656,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('cancelIdEvent').value = id;
     });
 });
-
-
-
-
-    $(document).ready(function() {
+$(document).ready(function() {
         // Αρχικοποίηση του DataTable για το πίνακα
         $('#questionsTable').DataTable({
             "paging": true,      // Ενεργοποιεί την πλοήγηση (pagination)
