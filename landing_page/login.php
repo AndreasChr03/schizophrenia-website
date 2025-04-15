@@ -176,15 +176,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <!-- Πεδίο Κωδικού -->
     <div class="mb-3">
-        <label for="password"><i class="fa fa-lock"></i> Κωδικός Πρόσβασης</label>
-        <input type="password" name="password" id="password" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>" style="background-color: #E8F0FE; color: black;">
-        <div class="invalid-feedback">
-            <?php echo $password_err ?? ''; ?>
-        </div>
-        <div class="valid-feedback">
-            <i class="fa fa-check-circle" style="color: green;"></i> Ο κωδικός είναι έγκυρος!
-        </div>
+    <label for="password"><i class="fa fa-lock"></i> Κωδικός Πρόσβασης</label>
+    <div class="input-group">
+        <input type="password" name="password" id="password"
+               class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>"
+               style="background-color: #E8F0FE; color: black;">
+        <span class="input-group-text" style="background-color: #E8F0FE;">
+            <i class="fa fa-eye toggle-password"
+               toggle="#password"
+               style="cursor: pointer; color: black;"></i>
+        </span>
     </div>
+    <div class="invalid-feedback">
+        <?php echo $password_err ?? ''; ?>
+    </div>
+    <div class="valid-feedback">
+        <i class="fa fa-check-circle" style="color: green;"></i> Ο κωδικός είναι έγκυρος!
+    </div>
+</div>
+
+<!-- JS για το eye toggle -->
+<script>
+    document.querySelectorAll(".toggle-password").forEach(icon => {
+        icon.addEventListener("click", function () {
+            const input = document.querySelector(this.getAttribute("toggle"));
+            if (input.type === "password") {
+                input.type = "text";
+                this.classList.remove("fa-eye");
+                this.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                this.classList.remove("fa-eye-slash");
+                this.classList.add("fa-eye");
+            }
+        });
+    });
+</script>
 
     <!-- Κουμπί Υποβολής -->
     <div>

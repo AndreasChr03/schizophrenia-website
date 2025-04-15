@@ -39,12 +39,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $gender = $_POST['gender'];
     }
 
-    // Check if password is empty
     if (empty(trim($_POST['password']))) {
         $password_err = "Απαιτείται ο κωδικός πρόσβασης.";
     } else {
         $password = $_POST['password'];
+    
+        // Έλεγχος για μήκος
+        if (strlen($password) < 7) {
+            $password_err = "Ο κωδικός πρέπει να περιέχει τουλάχιστον 7 χαρακτήρες.";
+        }
+        // Έλεγχος για κεφαλαία γράμματα
+        elseif (!preg_match('/[A-Z]/', $password)) {
+            $password_err = "Ο κωδικός πρέπει να περιέχει τουλάχιστον ένα κεφαλαίο γράμμα.";
+        }
+        // Έλεγχος για μικρά γράμματα
+        elseif (!preg_match('/[a-z]/', $password)) {
+            $password_err = "Ο κωδικός πρέπει να περιέχει τουλάχιστον ένα μικρό γράμμα.";
+        }
+        // Έλεγχος για αριθμούς
+        elseif (!preg_match('/[0-9]/', $password)) {
+            $password_err = "Ο κωδικός πρέπει να περιέχει τουλάχιστον έναν αριθμό.";
+        }
     }
+    
     
 
     // Check if name is empty
@@ -405,30 +422,77 @@ select:hover {
 </div>
 </div>
 
-    <!-- Passwords on the same row -->
+    <!-- Passwords with toggle eye icons (ίδιο στυλ με πριν) -->
     <div class="row mb-2">
-        <div class="col-6">
-            <label for="password"><i class="fa fa-lock"></i> Κωδικός Πρόσβασης*</label>
-            <input type="password" name="password" id="password" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>" style="background-color: #E8F0FE !important; color: black !important;">
-            <div class="invalid-feedback">
-                <?php echo $password_err ?? ''; ?>
+    <!-- Κωδικός Πρόσβασης -->
+    <div class="col-6 position-relative">
+        <label for="password"><i class="fa fa-lock"></i> Κωδικός Πρόσβασης*</label>
+        <div class="input-group">
+            <input type="password" name="password" id="password"
+                   class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : (isset($_POST['password']) ? 'is-valid' : ''); ?>"
+                   style="background-color: #E8F0FE !important; color: black !important;">
+            <span class="input-group-text" style="background-color: #E8F0FE;">
+                <i class="fa fa-eye toggle-password"
+                   toggle="#password"
+                   style="cursor: pointer; color: black;"></i>
+            </span>
+        </div>
+        <?php if (!empty($password_err)): ?>
+            <div class="invalid-feedback d-block">
+                <?php echo $password_err; ?>
             </div>
-            <div class="valid-feedback">
+        <?php elseif (isset($_POST['password'])): ?>
+            <div class="valid-feedback d-block">
                 <i class="fa fa-check-circle" style="color: green;"></i> Έγκυρος κωδικός πρόσβασης!
             </div>
+        <?php endif; ?>
     </div>
-    
-    <div class="col-6">
+
+    <!-- Επιβεβαίωση Κωδικού -->
+    <div class="col-6 position-relative">
         <label for="confirm_password"><i class="fa fa-lock"></i> Επιβεβαίωση Κωδικού*</label>
-        <input type="password" name="confirm_password" id="confirm_password" class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>" style="background-color: #E8F0FE !important; color: black !important;">
-        <div class="invalid-feedback">
-            <?php echo $confirm_password_err ?? ''; ?>
+        <div class="input-group">
+            <input type="password" name="confirm_password" id="confirm_password"
+                   class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : (isset($_POST['confirm_password']) ? 'is-valid' : ''); ?>"
+                   style="background-color: #E8F0FE !important; color: black !important;">
+            <span class="input-group-text" style="background-color: #E8F0FE;">
+                <i class="fa fa-eye toggle-password"
+                   toggle="#confirm_password"
+                   style="cursor: pointer; color: black;"></i>
+            </span>
         </div>
-        <div class="valid-feedback">
-            <i class="fa fa-check-circle" style="color: green;"></i> Ο κωδικός επιβεβαιώθηκε!
-        </div>
+        <?php if (!empty($confirm_password_err)): ?>
+            <div class="invalid-feedback d-block">
+                <?php echo $confirm_password_err; ?>
+            </div>
+        <?php elseif (isset($_POST['confirm_password'])): ?>
+            <div class="valid-feedback d-block">
+                <i class="fa fa-check-circle" style="color: green;"></i> Ο κωδικός επιβεβαιώθηκε!
+            </div>
+        <?php endif; ?>
     </div>
 </div>
+
+
+<!-- JS για toggle εμφάνισης/απόκρυψης κωδικού -->
+<script>
+    const toggleIcons = document.querySelectorAll(".toggle-password");
+    toggleIcons.forEach(icon => {
+        icon.addEventListener("click", function () {
+            const input = document.querySelector(this.getAttribute("toggle"));
+            if (input.type === "password") {
+                input.type = "text";
+                this.classList.remove("fa-eye");
+                this.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                this.classList.remove("fa-eye-slash");
+                this.classList.add("fa-eye");
+            }
+        });
+    });
+</script>
+
         <!-- Submit button -->
         <div class="mb-2 mt-3 d-flex justify-content-end">
             <button type="submit" class="btn btn-primary"onclick="checkForm()" style="font-weight: 600; background-color: #1997CC !important;">Δημιουργία</button>

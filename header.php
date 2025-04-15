@@ -115,7 +115,7 @@ if ($banned) {
 
         <nav id="navmenu" class="navmenu">
           <ul>
-          <li><a href="index.php" class="active">Αρχική<br></a></li>
+          <li><a href="index.php" class="">Αρχική<br></a></li>
             <li><a href="index.php#departments">Σχιζοφρένεια</a></li>
             <li><a href="index.php#questions">Ερωτήσεις</a></li>
             <li><a href="index.php#events">Εκδηλώσεις</a></li>

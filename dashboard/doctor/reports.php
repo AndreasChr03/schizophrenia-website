@@ -10,7 +10,7 @@
         header("Location: ../../index.php"); 
         exit();
     }
-
+    $doctor_id = $_SESSION['user']['user_id'];
     $year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
 
     $sqlGraph = "SELECT result, COUNT(*) AS count FROM rating WHERE client_email = ? AND YEAR(date) = ? GROUP BY result";
@@ -76,7 +76,49 @@ $resultEvent = $stmtEvent->get_result();
         $personalLabels[] = $row['title']; // Τα ονόματα των εκδηλώσεων
         $personalCounts[] = $row['participant_count']; // Ο αριθμός των συμμετεχόντων
     }
-?>
+    $years = [];
+    $currentYear = date('Y');
+    for ($i = 4; $i >= 0; $i--) {
+        $years[] = $currentYear - $i;
+    }
+    
+    $maleCounts = [];
+    $femaleCounts = [];
+    
+    foreach ($years as $year) {
+        $startDate = "$year-01-01";
+        $endDate = "$year-12-31";
+    
+        $stmt = $conn->prepare("
+            SELECT u.gender, COUNT(*) as count
+            FROM appointment_details a
+            JOIN users u ON a.clientEmail = u.email
+            WHERE a.doctor_id = ? AND a.appointmentDate BETWEEN ? AND ?
+            GROUP BY u.gender
+        ");
+        $stmt->bind_param("sss", $doctor_id, $startDate, $endDate);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        $male = 0;
+        $female = 0;
+    
+        while ($row = $result->fetch_assoc()) {
+            if (strtolower($row['gender']) === 'male') {
+                $male = (int)$row['count'];
+            } elseif (strtolower($row['gender']) === 'female') {
+                $female = (int)$row['count'];
+            }
+        }
+    
+        $maleCounts[] = $male;
+        $femaleCounts[] = $female;
+    
+        $stmt->close();
+    }
+    
+    $conn->close();
+    ?>
 
 
 <!DOCTYPE html>
@@ -90,6 +132,63 @@ $resultEvent = $stmtEvent->get_result();
 </head>
 <body>
     <?php include "header.php"; ?>
+
+    <div class="content">
+    <div class="container_table" style="margin: 0 auto; max-width: 800px;">
+        <h2 style="text-align: center; padding-bottom: 40px;">
+            Ραντεβού Ανδρών και Γυναικών ανά Έτος
+        </h2>
+        <canvas id="appointmentsChart"></canvas>
+    </div>
+</div>
+
+    <script>
+        const ctx3 = document.getElementById('appointmentsChart').getContext('2d');
+        const appointmentsChart = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: <?php echo json_encode($years); ?>,
+                datasets: [
+                    {
+                        label: 'Άνδρες',
+                        data: <?php echo json_encode($maleCounts); ?>,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                    },
+                    {
+                        label: 'Γυναίκες',
+                        data: <?php echo json_encode($femaleCounts); ?>,
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Ραντεβού Ανδρών και Γυναικών ανά Έτος'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Αριθμός Ραντεβού'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Έτος'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+
 
     <div class="content">
     
