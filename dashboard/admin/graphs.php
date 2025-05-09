@@ -71,6 +71,15 @@
     <link rel="icon" href="../../assets/img/favicon_32x32.png" sizes="32x32" type="image/png">
     <link rel="stylesheet" href="reports.css">
 </head>
+<style>
+
+.chart-container {
+  width: 100%;
+  max-width: 1000px; /* Ή ό,τι πλάτος θες */
+  margin: 0 auto; /* Κεντράρει το container οριζόντια */
+  padding: 20px;
+}
+</style>
 <body style="overflow-y: hidden;" >
     <?php include "header.php"; ?>
     <div class="container-fluid">
@@ -115,11 +124,7 @@
         </section>
 
     <div class="charts-row">
-        <div class="chart-container">
-            <h2 style="text-align: center; padding-bottom: 40px;">Αριθμός Ραντεβού Ανά Μήνα</h2>
-            <canvas id="secondChart"></canvas>
-        </div>
-        <div class="chart-container">
+        <div class="chart-container" style="width: 100%; max-width: 1000px; margin: 0 auto; padding: 20px;">
         <h2 style="text-align: center;">
           Αποτελέσματα Χρηστών Ανά Έτος 
           <select id="yearFilter" onchange="updateChart()" style="font-size: 22px; height: 40px; line-height: 40px;">

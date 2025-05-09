@@ -114,10 +114,39 @@ $resultEvent = $stmtEvent->get_result();
         $maleCounts[] = $male;
         $femaleCounts[] = $female;
     
-        $stmt->close();
+        
     }
     
-    $conn->close();
+    
+    
+    
+    $sql = "SELECT 
+    e.id AS event_id, 
+    e.title, 
+    e.`date`, 
+    e.`time`, 
+    e.user_id,
+    u.name, 
+    u.surname, 
+    u.email,
+    COUNT(p.id) AS participant_count
+FROM events e
+INNER JOIN users u ON e.user_id = u.user_id
+LEFT JOIN participants p ON e.id = p.id_event
+GROUP BY e.id, e.title, e.`date`, e.`time`, e.user_id, u.name, u.surname, u.email
+ORDER BY participant_count DESC";
+
+$stmt = $conn->prepare($sql);
+
+if (!$stmt) {
+die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+}
+
+$stmt->execute();
+
+// Παίρνουμε το αποτέλεσμα
+$result4 = $stmt->get_result();
+    
     ?>
 
 
@@ -195,19 +224,82 @@ $resultEvent = $stmtEvent->get_result();
     <div class="allTables">
         <div class="container_table" style="flex: 1; margin-left: 20px;">
         <h2 style="text-align: center; padding-bottom: 40px; display: flex; justify-content: center; align-items: center; gap: 10px;">
-            Αποτελέσματα Εκδηλώσεων
+            Καλύτερες 5 Εκδηλώσεις σε επισκεψιμότητα
         </h2>
+        <p style="text-align: center;">Τα τελευταία 3 χρόνια</p>
         <canvas id="resultsChart1"></canvas>
     </div>
     <div class="container_table" style="flex: 1; margin-left: 20px;">
                 <h2 style="text-align: center; padding-bottom: 40px; display: flex; justify-content: center; align-items: center; gap: 10px;">
-                    Προσωπικές εκδηλώσεις
+                    Προσωπικές εκδηλώσεις σε επισκεψιμότητα
                 </h2>
+                <p style="text-align: center;">Τα τελευταία 3 χρόνια</p>
                 <canvas id="resultsChart2"></canvas>
             </div>
     
         </div>
     </div>
+    
+    <div class="d-flex justify-content-center mt-5">
+        <div class="container_table shadow p-4 rounded" style="max-width: 95%; background-color: #f8f9fa;">
+        <h2 style="text-align: center; padding-bottom: 40px;">Πληροφορίες Εκδηλώσεων</h2>
+        <table id="questionsTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Τίτλος</th>
+                    <th>Ημερομηνία</th>
+                    <th>Ώρα</th>
+                    <th>Διοργανωτής</th>
+                    <th>Συμμετέχοντες</th>
+                    <th>Επικοινωνία</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                $counter = 1;
+                while ($row = $result4->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= $counter++ ?></td>
+                        <td><?= htmlspecialchars($row['title']) ?></td>
+                        <td><?= htmlspecialchars($row['date']) ?></td>
+                        <td><?= htmlspecialchars($row['time']) ?></td>
+                        <td><?= htmlspecialchars($row['name'] . ' ' . $row['surname']) ?></td>
+                        <td><?= htmlspecialchars($row['participant_count']) ?></td>
+                        <td>
+                            <a href="mailto:<?= htmlspecialchars($row['email']) ?>" class="btn btn-primary">
+                                Επικοινωνία
+                            </a>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!--  jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!--  DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+<!--  DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<!--  Ενεργοποίηση του DataTable αφού έχουν φορτωθεί όλα -->
+<script>
+    $(document).ready(function () {
+        $('#questionsTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/el.json"
+            },
+            "pageLength": 10,
+            "ordering": true
+        });
+    });
+</script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
     

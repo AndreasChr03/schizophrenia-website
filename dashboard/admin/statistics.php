@@ -201,7 +201,7 @@ while ($row = $result->fetch_assoc()) {
                   <i class="fa-solid fa-user-doctor"></i>
                   <div class="stats-item">
                     <span data-purecounter-start="0" data-purecounter-end="<?= $totalUsers ?>" data-purecounter-duration="1" class="purecounter"></span>
-                    <p>Users</p>
+                    <p>Χρήστες</p>
                   </div>
                 </div><!-- End Stats Item -->
             
@@ -209,7 +209,7 @@ while ($row = $result->fetch_assoc()) {
                   <i class="fa-regular fa-hospital"></i>
                   <div class="stats-item">
                     <span data-purecounter-start="0" data-purecounter-end="<?= $newUsers ?>" data-purecounter-duration="1" class="purecounter"></span>
-                    <p>New Users Last 3 Months</p>
+                    <p>Χρήστες τους Τελευταίους 3 Μήνες</p>
                   </div>
                 </div><!-- End Stats Item -->
             
@@ -217,7 +217,7 @@ while ($row = $result->fetch_assoc()) {
                   <i class="fas fa-flask"></i>
                   <div class="stats-item">
                     <span data-purecounter-start="0" data-purecounter-end="<?= $totalWomen ?>" data-purecounter-duration="1" class="purecounter"></span>
-                    <p>Women</p>
+                    <p>Γυναίκες</p>
                   </div>
                 </div><!-- End Stats Item -->
             
@@ -225,7 +225,7 @@ while ($row = $result->fetch_assoc()) {
                   <i class="fas fa-award"></i>
                   <div class="stats-item">
                     <span data-purecounter-start="0" data-purecounter-end="<?= $totalMen ?>" data-purecounter-duration="1" class="purecounter"></span>
-                    <p>Men</p>
+                    <p>Άντρες</p>
                   </div>
                 </div><!-- End Stats Item -->
             
@@ -238,6 +238,12 @@ while ($row = $result->fetch_assoc()) {
 
             <div class="container" data-aos="fade-up" data-aos-delay="200">
             <h2 style="text-align: center; padding-bottom: 40px;">Ερωτήσεις Ερωτηματολογίου</h2>
+            <div class="row gy-4">
+              <strong id="totalUsers" style="display: block; text-align: center;">
+                  Ο συνολικός αριθμός Ερωτηματολογίων είναι 
+                  <?= $no_signs + $possibility_early + $early_schizophrenia;?>
+              </strong>
+            </div>
               <div class="row gy-4">
             
                 <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center">
@@ -273,10 +279,16 @@ while ($row = $result->fetch_assoc()) {
 
             <div class="container" data-aos="fade-up" data-aos-delay="100">
             <h2 style="text-align: center; padding-bottom: 40px;">Οι 4 Πόλεις με τη Μεγαλύτερη Συμμετοχή</h2>
+            <div class="row gy-4">
+              <strong id="totalUsers" style="display: block; text-align: center;">
+                  Ο συνολικός αριθμός χρηστών είναι 
+                  <?= $totalUsers?>
+              </strong>
+            </div>
               <div class="row gy-4">
             
                 <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-                  <i class="fa-solid fa-user-doctor"></i>
+                  <i class="fa-regular fa-hospital"></i>
                   <div class="stats-item">
                     <span data-purecounter-start="0" data-purecounter-end="<?= $top_cities[0]['total_users'] ?? 0 ?>" data-purecounter-duration="1" class="purecounter"></span>
                     <p><?= $top_cities[0]['city'] ?? '-' ?></p>
@@ -292,7 +304,7 @@ while ($row = $result->fetch_assoc()) {
                 </div><!-- End Stats Item -->
             
                 <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-                  <i class="fas fa-flask"></i>
+                  <i class="fa-regular fa-hospital"></i>
                   <div class="stats-item">
                     <span data-purecounter-start="0" data-purecounter-end="<?= $top_cities[2]['total_users'] ?? 0 ?>" data-purecounter-duration="1" class="purecounter"></span>
                     <p><?= $top_cities[2]['city'] ?? '-' ?></p>
@@ -300,7 +312,7 @@ while ($row = $result->fetch_assoc()) {
                 </div><!-- End Stats Item -->
             
                 <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
-                  <i class="fas fa-award"></i>
+                  <i class="fa-regular fa-hospital"></i>
                   <div class="stats-item">
                     <span data-purecounter-start="0" data-purecounter-end="<?= $top_cities[3]['total_users'] ?? 0 ?>" data-purecounter-duration="1" class="purecounter"></span>
                     <p><?= $top_cities[3]['city'] ?? '-' ?></p>

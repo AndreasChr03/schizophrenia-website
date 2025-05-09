@@ -76,6 +76,35 @@ $resultEvent = $stmtEvent->get_result();
         $personalLabels[] = $row['title']; // Τα ονόματα των εκδηλώσεων
         $personalCounts[] = $row['participant_count']; // Ο αριθμός των συμμετεχόντων
     }
+    $sql = "SELECT 
+            e.id AS event_id, 
+            e.title, 
+            e.`date`, 
+            e.`time`, 
+            e.user_id,
+            u.name, 
+            u.surname, 
+            u.email,
+            COUNT(p.id) AS participant_count
+        FROM events e
+        INNER JOIN users u ON e.user_id = u.user_id
+        LEFT JOIN participants p ON e.id = p.id_event
+        GROUP BY e.id, e.title, e.`date`, e.`time`, e.user_id, u.name, u.surname, u.email
+        ORDER BY participant_count DESC";
+
+$stmt = $conn->prepare($sql);
+
+if (!$stmt) {
+    die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+}
+
+$stmt->execute();
+
+// Παίρνουμε το αποτέλεσμα
+$result4 = $stmt->get_result();
+    
+    
+    
 ?>
 
 
@@ -87,105 +116,93 @@ $resultEvent = $stmtEvent->get_result();
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="../../assets/img/favicon1.png" rel="icon">
     <link rel="stylesheet" href="../../dashboard/admin/reports.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 </head>
 <body>
     <?php include "header.php"; ?>
 
+    
     <div class="content">
-        <div class="allTables" style="display: flex;">
-            <div class="container_table" style="flex: 1; margin-right: 20px;">
-                <h2 style="text-align: center; padding-bottom: 40px;">Αποτελέσματα Ερωτηματολογίου</h2>
-                <table id="questionsTable" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Ποσοστό</th>
-                            <th>Αποτέλεσμα</th>
-                            <th>Ημερομηνία</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $sql1 = "SELECT * FROM rating WHERE client_email = ?";
-                        $stmt = $conn->prepare($sql1);   
-                        $stmt->bind_param("s", $email_user);  
-                        $stmt->execute();
-
-                        $result = $stmt->get_result();
-                        if ($result->num_rows > 0) {
-                            $ctr = 0;
-                            while ($row = $result->fetch_assoc()) {
-                                $ctr++;
-                                echo "<tr>";
-                                echo "<td>" . $ctr  . "</td>";
-                                echo "<td>" . htmlspecialchars($row['percentage']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['result']) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['date']) . "</td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='4'>Δεν βρέθηκαν κάποια αποτελέσματα.</td></tr>";
-                        }
-                        $stmt->close();
-                        ?>
-                    </tbody>
-                </table>
-            </div>
-
+        <div class="allTables">
             <div class="container_table" style="flex: 1; margin-left: 20px;">
-                <h2 style="text-align: center; padding-bottom: 40px; display: flex; justify-content: center; align-items: center; gap: 10px;">
-                    Αποτελέσματα Ερωτηματολογίου
-                    <form method="GET" style="margin: 0;">
-                        <select name="year" onchange="this.form.submit()" style="padding: 0px 10px; font-size: 18px; text-align: center;">
-                            <?php 
-                            for ($i = date('Y'); $i >= date('Y') - 10; $i--) {
-                                $selected = ($i == $year) ? 'selected' : '';
-                                echo "<option value='" . $i . "' " . $selected . ">" . $i . "</option>";
-                            }
-                            ?>
-                        </select>
-                    </form>
-                </h2>
-                <canvas id="resultsChart"></canvas>
-            </div>
+            <h2 style="text-align: center; padding-bottom: 40px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                Καλύτερες 5 Εκδηλώσεις σε επισκεψιμότητα
+            </h2>
+            <p style="text-align: center;">Τα τελευταία 3 χρόνια</p>
+            <canvas id="resultsChart1"></canvas>
         </div>
-    
-    <div class="allTables">
         <div class="container_table" style="flex: 1; margin-left: 20px;">
-        <h2 style="text-align: center; padding-bottom: 40px; display: flex; justify-content: center; align-items: center; gap: 10px;">
-            Αποτελέσματα Εκδηλώσεων
-        </h2>
-        <canvas id="resultsChart1"></canvas>
-    </div>
-    <div class="container_table" style="flex: 1; margin-left: 20px;">
-                <h2 style="text-align: center; padding-bottom: 40px; display: flex; justify-content: center; align-items: center; gap: 10px;">
-                    Προσωπικές εκδηλώσεις
-                </h2>
-                <canvas id="resultsChart2"></canvas>
+                    <h2 style="text-align: center; padding-bottom: 40px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                        Προσωπικές εκδηλώσεις σε επισκεψιμότητα
+                    </h2>
+                    <p style="text-align: center;">Τα τελευταία 3 χρόνια</p>
+                    <canvas id="resultsChart2"></canvas>
+                </div>
+        
             </div>
-    
-        </div>
     </div>
+    
 
+    
+    <div class="d-flex justify-content-center mt-5">
+        <div class="container_table shadow p-4 rounded" style="max-width: 95%; background-color: #f8f9fa;">
+        <h2 style="text-align: center; padding-bottom: 40px;">Πληροφορίες Εκδηλώσεων</h2>
+        <table id="questionsTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Τίτλος</th>
+                    <th>Ημερομηνία</th>
+                    <th>Ώρα</th>
+                    <th>Διοργανωτής</th>
+                    <th>Συμμετέχοντες</th>
+                    <th>Επικοινωνία</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                $counter = 1;
+                while ($row = $result4->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= $counter++ ?></td>
+                        <td><?= htmlspecialchars($row['title']) ?></td>
+                        <td><?= htmlspecialchars($row['date']) ?></td>
+                        <td><?= htmlspecialchars($row['time']) ?></td>
+                        <td><?= htmlspecialchars($row['name'] . ' ' . $row['surname']) ?></td>
+                        <td><?= htmlspecialchars($row['participant_count']) ?></td>
+                        <td>
+                            <a href="mailto:<?= htmlspecialchars($row['email']) ?>" class="btn btn-primary">
+                                Επικοινωνία
+                            </a>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!--  jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        var ctx = document.getElementById('resultsChart').getContext('2d');
-        var labels = <?php echo json_encode($resultsData); ?>; // Προσάρμοσε τα δεδομένα εδώ
-        var data = <?php echo json_encode($resultsCounts); ?>; // Προσάρμοσε τα δεδομένα εδώ
+<!--  DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
-        var resultsChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Αποτελέσματα Ερωτηματολογίου',
-                    data: data,
-                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-                    hoverOffset: 4
-                }]
-            }
+<!--  DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<!--  Ενεργοποίηση του DataTable αφού έχουν φορτωθεί όλα -->
+<script>
+    $(document).ready(function () {
+        $('#questionsTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/el.json"
+            },
+            "pageLength": 10,
+            "ordering": true
         });
-    </script>
+    });
+</script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -241,6 +258,8 @@ $resultEvent = $stmtEvent->get_result();
         }
     });
 </script>
+
+
 
 
 </body>

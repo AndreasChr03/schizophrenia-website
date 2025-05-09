@@ -131,21 +131,31 @@
     
     
     // __________________________________________pinakas 1__________________________________________
-    $sqlGraph = "SELECT result, COUNT(*) AS count FROM rating GROUP BY result";
-    $stmtGraph = $conn->prepare($sqlGraph);
-    if ($stmtGraph === false) {
-        die("Σφάλμα κατά την προετοιμασία του statement: " . $conn->error);
-    }
-    $stmtGraph->execute();
-    $result = $stmtGraph->get_result();
-    
-    // Δημιουργία πίνακα για τα δεδομένα του γραφήματος
-    $resultsData = [];
-    $counts = [];
-    while ($row = $result->fetch_assoc()) {
-        $resultsData[] = $row['result'];
-        $counts[] = $row['count'];
-    }
+    $sqlYears = "SELECT DISTINCT YEAR(date) as year FROM rating ORDER BY year DESC";
+$resultYears = $conn->query($sqlYears);
+
+$years = [];
+while ($row = $resultYears->fetch_assoc()) {
+    $years[] = $row['year'];
+}
+
+// Τώρα πάρε το έτος που επιλέχθηκε ή το πιο πρόσφατο
+$selectedYear = $_GET['year'] ?? $years[0];
+
+// Πάρε αποτελέσματα μόνο για το συγκεκριμένο έτος
+$sqlGraph = "SELECT result, COUNT(*) AS count FROM rating WHERE YEAR(date) = ? GROUP BY result";
+$stmtGraph = $conn->prepare($sqlGraph);
+$stmtGraph->bind_param("i", $selectedYear);
+$stmtGraph->execute();
+$result = $stmtGraph->get_result();
+
+$resultsData = [];
+$counts = [];
+while ($row = $result->fetch_assoc()) {
+    $resultsData[] = $row['result'];
+    $counts[] = $row['count'];
+    $totalResultsForYear = array_sum($counts);
+}
     
     
     //_______________________________pinakas 2________________________________________________
@@ -295,54 +305,73 @@ array_multisort($months, SORT_ASC, $appointmentCounts);
         </section>
 
         <div class="charts-row">
-            <div class="chart-container">
-                <h2 style="text-align: center; padding-bottom: 40px;">Αποτελέσματα Ερωτηματολογίου</h2>
-                <canvas id="resultsChart"></canvas>
-            </div>
+        <div class="chart-container">
+        <h2 style="text-align: center;">
+            Αποτελέσματα Χρηστών Ανά Έτος
+            <select id="yearFilter" onchange="updateChart()" style="font-size: 22px; height: 40px;">
+                <?php foreach ($years as $year): ?>
+                    <option value="<?= $year ?>" <?= ($year == $selectedYear ? 'selected' : '') ?>><?= $year ?></option>
+                <?php endforeach; ?>
+            </select>
+        </h2>
+        
+        <p style="text-align: center; font-size: 20px;">
+            Σύνολο χρηστών για το έτος 
+            <span id="selectedYear"><?= $selectedYear ?></span>: 
+            <strong id="totalUsers"><?= $totalResultsForYear ?? "0" ?></strong>
+        </p>
+            
+            <canvas id="resultsChart"></canvas>
+        </div>
         <div class="chart-container">
             <h2 style="text-align: center; padding-bottom: 40px;">Αριθμός Ραντεβού Ανά Μήνα</h2>
             <canvas id="secondChart"></canvas>
         </div>
     </div>
 
+    
     <script>
-    const labels = <?php echo json_encode($resultsData); ?>;
-    const dataCounts = <?php echo json_encode($counts); ?>;
-
-    const ctx1 = document.getElementById('resultsChart').getContext('2d');
-    new Chart(ctx1, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Αριθμός Αξιολογήσεων',
-                data: dataCounts,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.7)', // Κόκκινο
-                    'rgba(75, 192, 192, 0.7)', // Πράσινο
-                    'rgba(54, 162, 235, 0.7)', // Μπλε
-                    'rgba(153, 102, 255, 0.7)', // Μωβ
-                    'rgba(255, 159, 64, 0.7)'  // Πορτοκαλί
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: { beginAtZero: true }
-            }
+    const chartLabels = <?= json_encode($resultsData) ?>;
+    const chartData = <?= json_encode($counts) ?>;
+    const ctx = document.getElementById('resultsChart').getContext('2d');
+    let chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: chartLabels,
+        datasets: [{
+            label: 'Αριθμός Αξιολογήσεων',
+            data: chartData,
+            backgroundColor: [
+                'rgba(75, 192, 192, 0.7)',   // Τιρκουάζ
+                'rgba(255, 99, 132, 0.7)',   // Κόκκινο
+                'rgba(255, 206, 86, 0.7)',   // Κίτρινο
+                // Μπορείς να επαναλαμβάνεις τα χρώματα αν έχεις περισσότερα δεδομένα
+            ],
+            borderColor: [
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(255, 206, 86, 1)',
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: { beginAtZero: true }
         }
-    });
+    }
+});
+
+    function updateChart() {
+        const year = document.getElementById("yearFilter").value;
+        window.location.href = "?year=" + year; // Φορτώνει ξανά τη σελίδα με το νέο έτος
+    }
+
     
-    
+
+
+
 
     const appointmentMonths = <?php echo json_encode($months); ?>;
 const appointmentCounts = <?php echo json_encode($appointmentCounts); ?>;
