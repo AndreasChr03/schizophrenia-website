@@ -253,7 +253,7 @@ array_multisort($months, SORT_ASC, $appointmentCounts);
         <div class="content">
 
         
-    <section id="stats" class="stats section light-background">
+    <section id="stats" class="stats section light-background" style="padding-bottom: 20;">
 
         <div class="container" data-aos="fade-up" data-aos-delay="100">
         
@@ -304,8 +304,8 @@ array_multisort($months, SORT_ASC, $appointmentCounts);
           </div>
         </section>
 
-        <div class="charts-row">
-        <div class="chart-container">
+        <div class="charts-row" style="display: flex; justify-content: center;">
+    <div class="chart-container" style="max-width: 800px; width: 100%;">
         <h2 style="text-align: center;">
             Αποτελέσματα Χρηστών Ανά Έτος
             <select id="yearFilter" onchange="updateChart()" style="font-size: 22px; height: 40px;">
@@ -320,13 +320,14 @@ array_multisort($months, SORT_ASC, $appointmentCounts);
             <span id="selectedYear"><?= $selectedYear ?></span>: 
             <strong id="totalUsers"><?= $totalResultsForYear ?? "0" ?></strong>
         </p>
-            
-            <canvas id="resultsChart"></canvas>
-        </div>
-        <div class="chart-container">
+        
+        <canvas id="resultsChart"></canvas>
+    </div>
+
+        <!-- <div class="chart-container">
             <h2 style="text-align: center; padding-bottom: 40px;">Αριθμός Ραντεβού Ανά Μήνα</h2>
             <canvas id="secondChart"></canvas>
-        </div>
+        </div> -->
     </div>
 
     
@@ -373,30 +374,30 @@ array_multisort($months, SORT_ASC, $appointmentCounts);
 
 
 
-    const appointmentMonths = <?php echo json_encode($months); ?>;
-const appointmentCounts = <?php echo json_encode($appointmentCounts); ?>;
+//     const appointmentMonths = <?php echo json_encode($months); ?>;
+// const appointmentCounts = <?php echo json_encode($appointmentCounts); ?>;
 
-const ctx2 = document.getElementById('secondChart').getContext('2d');
-new Chart(ctx2, {
-    type: 'line',
-    data: {
-        labels: appointmentMonths,
-        datasets: [{
-            label: 'Ραντεβού ανά Μήνα (12 Προηγούμενοι Μήνες)',
-            data: appointmentCounts,
-            borderColor: 'rgba(54, 162, 235, 1)', // Πράσινο
-            backgroundColor: 'rgba(54, 162, 235, 0.7)', // Διαφανές Πράσινο
-            fill: true,
-            tension: 0.4
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: { beginAtZero: true }
-        }
-    }
-});
+// const ctx2 = document.getElementById('secondChart').getContext('2d');
+// new Chart(ctx2, {
+//     type: 'line',
+//     data: {
+//         labels: appointmentMonths,
+//         datasets: [{
+//             label: 'Ραντεβού ανά Μήνα (12 Προηγούμενοι Μήνες)',
+//             data: appointmentCounts,
+//             borderColor: 'rgba(54, 162, 235, 1)', // Πράσινο
+//             backgroundColor: 'rgba(54, 162, 235, 0.7)', // Διαφανές Πράσινο
+//             fill: true,
+//             tension: 0.4
+//         }]
+//     },
+//     options: {
+//         responsive: true,
+//         scales: {
+//             y: { beginAtZero: true }
+//         }
+//     }
+// });
 
     new PureCounter();
 </script>
